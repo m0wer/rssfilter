@@ -4,3 +4,4 @@ uvicorn
 feedparser
 requests
 loguru
+sqlmodel
