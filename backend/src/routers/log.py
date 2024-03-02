@@ -1,9 +1,7 @@
 from os import getenv
 
-import feedparser
 from fastapi import APIRouter
 from fastapi.responses import RedirectResponse
-from models.user import User
 from loguru import logger
 
 API_BASE_URL = getenv("API_BASE_URL", "https://rssfilter.sgn.space/api/v1")
