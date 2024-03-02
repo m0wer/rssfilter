@@ -1,7 +1,7 @@
 services:
 
   backend:
-    image: rssfilter-backend
+    image: ghcr.io/m0wer/rssfilter-frontend:master
     container_name: rssfilter-backend
     build:
       context: backend
@@ -17,7 +17,7 @@ services:
       traefik.http.services.backend.loadbalancer.server.port: 80
 
   frontend:
-    image: rssfilter-frontend
+    image: ghcr.io/m0wer/rssfilter-frontend:master
     container_name: rssfilter-frontend
     build:
       context: frontend
