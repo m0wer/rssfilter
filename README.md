@@ -23,3 +23,14 @@ streamlit run app.py --server.runOnSave true --server.headless true --logger.lev
 docker build -t local/rssfilter .
 docker run -p 8501:8501 local/rssfilter
 ```
+
+
+## Roadmap
+
+- [ ] Database
+    - [ ] users (id)
+    - [ ] feeds (id, url)
+    - [ ] users_to_feeds (id, user_id, feed_id)
+    - [ ] articles (id, title, body, ~image)
+    - [ ] feed_to_articles (id, feed_id, article_id)
+- [ ] Some persistance on what articles the user has read

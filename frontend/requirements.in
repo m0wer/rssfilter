@@ -1,6 +1,4 @@
 streamlit
-fastapi
-pydantic
 loguru
 pdbpp
 black
