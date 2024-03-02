@@ -8,6 +8,7 @@ services:
       target: dev
     environment:
       API_BASE_URL: "http://localhost:80/"
+      ROOT_PATH: "/api"
     volumes:
       - ./backend/src:/app/src
     labels:

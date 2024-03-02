@@ -1,21 +1,26 @@
+from os import getenv
+
 from fastapi import FastAPI
 from sqlmodel import SQLModel
-
-from src.routers import feed, log
 from src.db import engine
+from src.routers import feed, log
+
+ROOT_PATH = getenv("ROOT_PATH", "/")
+
 
 def create_app():
-    app = FastAPI()
+    app = FastAPI(root_path=ROOT_PATH)
 
     app.include_router(feed.router)
-    app.include_router(feed.router, prefix="/api/v1")
-    app.include_router(log.router, prefix="/api/v1")
-    app.include_router(feed.router, prefix="/api/latest")
+    app.include_router(feed.router, prefix="/v1")
+    app.include_router(log.router, prefix="/v1")
+    app.include_router(feed.router, prefix="/latest")
 
     return app
 
 
 app = create_app()
+
 
 # on startup, setup sqlmodel
 @app.on_event("startup")
