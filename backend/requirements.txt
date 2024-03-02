@@ -32,7 +32,6 @@ loguru==0.7.2
     # via -r requirements.in
 pydantic==2.6.3
     # via
-    #   -r requirements.in
     #   fastapi
     #   sqlmodel
 pydantic-core==2.16.3
