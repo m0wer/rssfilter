@@ -28,7 +28,7 @@ The `backend` image is multistage, thus be careful of building dev or final as `
 
 ## docker-compose
 
-The development setup runs on `docker compose` behind a traefik proxy.
+The development setup runs on `docker compose -f dev.docker-compose.yaml up --build` behind a traefik proxy.
 The backend is hot-reloaded, while for streamlit changes you need to rebuild the container.
 
 ```shell

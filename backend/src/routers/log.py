@@ -1,10 +1,9 @@
-from os import getenv
+from datetime import datetime, timezone
 
 from fastapi import APIRouter
 from fastapi.responses import RedirectResponse
-from datetime import datetime, timezone
 from loguru import logger
-
+from sqlmodel import Session, select
 from src.db import engine
 from src.models.article import Article
 from src.models.user import User

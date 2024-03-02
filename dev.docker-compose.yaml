@@ -7,7 +7,7 @@ services:
       context: backend
       target: dev
     environment:
-      API_BASE_URL: "http://localhost:80/"
+      API_BASE_URL: "http://localhost:${PROXY_PORT:-3000}"
       ROOT_PATH: "/api"
     volumes:
       - ./backend/src:/app/src
@@ -24,7 +24,7 @@ services:
       context: frontend
       target: dev
     environment:
-      API_BASE_URL: "http://localhost:80/api/v1/"
+      API_BASE_URL: "http://localhost:${PROXY_PORT:-3000}/api/v1/"
     # FIXME: this is so requests to /health and /host-config work on localhost
     # for any port
     ports:

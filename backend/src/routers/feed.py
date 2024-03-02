@@ -1,8 +1,12 @@
+import xml.etree.ElementTree as ET
+from datetime import datetime, timezone
 from os import getenv
 
 import requests
-from datetime import datetime, timezone
 from fastapi import APIRouter, Response
+from loguru import logger
+from sqlmodel import Session, select
+from src.db import engine
 from src.models.feed import Feed
 from src.models.user import User
 
@@ -10,6 +14,8 @@ from sqlmodel import Session, select
 
 
 from src.db import engine
+API_BASE_URL = getenv("API_BASE_URL", "https://rssfilter.sgn.space/").rstrip("/")
+ROOT_PATH = getenv("ROOT_PATH", "/api").lstrip("/")
 
 router = APIRouter(
     prefix="/feed",
@@ -38,8 +44,17 @@ async def save_feed(user_id, feed_url):
             feed.updated = datetime.now(timezone.utc)
         if feed not in user.feeds:
             user.feeds.append(feed)
-
         session.commit()
 
     feed_response = requests.get(feed_url)
-    return Response(content=feed_response.text, media_type="application/xml")
+    feed_root = ET.fromstring(feed_response.text)
+    namespace = feed_root.tag.split("}")[0][1:]
+    for link in feed_root.findall(".//{%s}link" % namespace):
+        old_link = link.get("href")
+        logger.debug("OLD LINK: {link}", link=old_link)
+        new_link = f"{API_BASE_URL}/{ROOT_PATH}/v1/log/{user_id}/{old_link}"
+        logger.debug("NEW LINK: {link}", link=new_link)
+        link.set("href", new_link)
+
+    modified_feed = ET.tostring(feed_root, encoding="unicode")
+    return Response(content=modified_feed, media_type="application/xml")
