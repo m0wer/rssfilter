@@ -2,4 +2,5 @@ fastapi
 pydantic
 uvicorn
 feedparser
+requests
 loguru
