@@ -60,7 +60,11 @@ jsonschema==4.21.1
     # via altair
 jsonschema-specifications==2023.12.1
     # via jsonschema
+listparser==0.19
+    # via -r requirements.in
 loguru==0.7.2
+    # via -r requirements.in
+lxml==5.1.0
     # via -r requirements.in
 markdown-it-py==3.0.0
     # via rich
