@@ -35,6 +35,8 @@ The backend is hot-reloaded, while for streamlit changes you need to rebuild the
 docker compose up
 ```
 
+Now you can access http://localhost on port 80, where traefik will redirect
+`/` to the frontend and `/api` to the backend (without stripping the prefix)
 
 ## Roadmap
 
