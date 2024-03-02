@@ -1,0 +1,8 @@
+streamlit
+fastapi
+pydantic
+loguru
+pdbpp
+black
+pip-tools
+feedparser
