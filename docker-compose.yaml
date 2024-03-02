@@ -30,7 +30,7 @@ services:
       traefik.http.services.frontend.loadbalancer.server.port: 8501
 
   proxy:
-    image: traefik:v2.5.3
+    image: traefik:v2.3
     hostname: traefik
     command:
      - --providers.docker
