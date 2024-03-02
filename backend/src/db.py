@@ -1,3 +1,8 @@
+import os
+
 from sqlmodel import create_engine
 
-engine = create_engine("sqlite:///db.sqlite", echo=True)
+if not os.path.exists("data"):
+    os.makedirs("data")
+
+engine = create_engine("sqlite:///data/db.sqlite", echo=True)

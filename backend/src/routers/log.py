@@ -10,8 +10,6 @@ from src.models.article import Article
 from src.models.user import User
 from sqlmodel import Session, select
 
-API_BASE_URL = getenv("API_BASE_URL", "https://rssfilter.sgn.space/api/v1")
-
 router = APIRouter(
     prefix="/log",
     tags=["log"],

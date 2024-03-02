@@ -7,13 +7,14 @@ services:
       context: backend
       target: final
     environment:
-      API_BASE_URL: "http://localhost:80/"
       ROOT_PATH: "/api"
     labels:
       traefik.http.routers.backend.entrypoints: web
       traefik.http.routers.backend.rule: PathPrefix(`/api`)
       traefik.http.routers.backend.service: backend
       traefik.http.services.backend.loadbalancer.server.port: 80
+    volumes:
+      - ${SQLITE_PATH:-./data/}:/app/data/
 
   frontend:
     image: ghcr.io/m0wer/rssfilter-frontend:master
@@ -22,7 +23,7 @@ services:
       context: frontend
       target: final
     environment:
-      API_BASE_URL: "http://localhost:80/api/v1/"
+      API_BASE_URL: "${API_BASE_URL:-https://rssfilter.sgn.space/api/v1/}"
     labels:
       traefik.http.routers.frontend.entrypoints: web
       traefik.http.routers.frontend.rule: PathPrefix(`/`)
@@ -36,6 +37,6 @@ services:
      - --providers.docker
      - --entryPoints.web.address=:80
     ports:
-      - ${PROXY_PORT:-3000}:80
+      - ${PROXY_PORT:-80}:80
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock

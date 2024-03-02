@@ -11,8 +11,6 @@ from sqlmodel import Session, select
 
 from src.db import engine
 
-API_BASE_URL = getenv("API_BASE_URL", "https://rssfilter.sgn.space/api/v1").rstrip("/")
-
 router = APIRouter(
     prefix="/feed",
     tags=["feed"],
