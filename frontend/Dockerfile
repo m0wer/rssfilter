@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM python:3.11-slim as base
 
 WORKDIR /app
 
@@ -16,5 +16,11 @@ EXPOSE 8501
 HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
 
 COPY . .
+
+FROM base as dev
+
+ENTRYPOINT ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0", "--browser.gatherUsageStats=False", "--logger.level=debug", "--server.enableCORS=false"]
+
+FROM base as final
 
 ENTRYPOINT ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0", "--browser.gatherUsageStats=False", "--logger.level=debug"]

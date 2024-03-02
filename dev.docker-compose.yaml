@@ -5,10 +5,12 @@ services:
     container_name: rssfilter-backend
     build:
       context: backend
-      target: final
+      target: dev
     environment:
       API_BASE_URL: "http://localhost:80/"
       ROOT_PATH: "/api"
+    volumes:
+      - ./backend/src:/app/src
     labels:
       traefik.http.routers.backend.entrypoints: web
       traefik.http.routers.backend.rule: PathPrefix(`/api`)
@@ -20,9 +22,13 @@ services:
     container_name: rssfilter-frontend
     build:
       context: frontend
-      target: final
+      target: dev
     environment:
       API_BASE_URL: "http://localhost:80/api/v1/"
+    # FIXME: this is so requests to /health and /host-config work on localhost
+    # for any port
+    ports:
+      - 8501:8501
     labels:
       traefik.http.routers.frontend.entrypoints: web
       traefik.http.routers.frontend.rule: PathPrefix(`/`)
@@ -35,6 +41,7 @@ services:
     command:
      - --providers.docker
      - --entryPoints.web.address=:80
+     - --entryPoints.web.forwardedHeaders.insecure
     ports:
       - ${PROXY_PORT:-3000}:80
     volumes:
