@@ -3,7 +3,7 @@ from os import getenv
 import requests
 from fastapi import APIRouter, Response
 
-API_BASE_URL = getenv("API_BASE_URL", "https://rssfilter.sgn.space/api/v1")
+API_BASE_URL = getenv("API_BASE_URL", "https://rssfilter.sgn.space/api/v1").rstrip("/")
 
 router = APIRouter(
     prefix="/feed",

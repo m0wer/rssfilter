@@ -5,7 +5,6 @@ is used to interact with the user.
 """
 
 from os import getenv
-from urllib.parse import quote, urljoin
 from uuid import uuid4
 
 import feedparser
@@ -13,14 +12,14 @@ import streamlit as st
 from loguru import logger
 from lxml import etree
 
-API_BASE_URL = getenv("API_BASE_URL", "https://rssfilter.sgn.space/api/v1")
+API_BASE_URL = getenv("API_BASE_URL", "https://rssfilter.sgn.space/api/v1").rstrip("/")
 
 logger.info("Streamlit app started")
 
 
 def get_rss_custom_feed(rss_feed_url: str, uuid: str | None = uuid4().hex) -> str:
     """Get the RSS feed from the URL."""
-    return urljoin(API_BASE_URL, f"feed/{uuid}/{quote(rss_feed_url)}")
+    return f"{API_BASE_URL}/feed/{uuid}/{rss_feed_url}"
 
 
 st.title("RSS Filter")
