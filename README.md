@@ -15,7 +15,9 @@ pip install -r requirements.txt
 
 There are some hooks in `.pre-commit-config.yaml` to ensure:
 - `pip-compile` is up-to-date with added dependencies
-- code is well formatted and linted with `ruff` and `black`
+- code is well formatted and linted with `ruff` and `black`.
+
+You can install these hooks with `pre-commit install` and run them on demand by `pre-commit run --all-files`.
 
 
 ## Docker
