@@ -40,7 +40,7 @@ if rss_feed_url:
     feed = feedparser.parse(rss_feed_url)
     if feed.status != 200:
         logger.info(f"Invalid RSS feed URL: {rss_feed_url}")
-        st.alert("Invalid RSS feed URL")
+        st.warning("Invalid RSS feed URL")
         rss_feed_url = None
     else:
         logger.info(f"RSS feed is valid. Found {len(feed.entries)} entries")
