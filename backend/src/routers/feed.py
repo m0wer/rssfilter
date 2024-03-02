@@ -20,6 +20,8 @@ async def save_feed(user_id, feed_url):
     user = User(uid=user_id)
     # TODO: Do something with user
     feed = feedparser.parse(feed_url)
-    if feed.status != 200:
-        return RedirectResponse(feed_url)
-    return feed
+    # TODO: Do something with the feed (create article, embeddings...)
+    # if feed.status != 200:
+    #     return RedirectResponse(feed_url)
+    # return feed
+    return RedirectResponse(feed_url)
