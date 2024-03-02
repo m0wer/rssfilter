@@ -1,14 +1,15 @@
 from datetime import datetime, timezone
-from uuid import UUID, uuid4
 
-from pydantic import BaseModel, Field, HttpUrl
+from sqlmodel import Field, SQLModel, Relationship
 
-
-def datetime_now() -> datetime:
-    return datetime.now(timezone.utc)
+from .relations import UserFeedLink
 
 
-class Feed(BaseModel):
-    uid: UUID = Field(default_factory=uuid4)
-    url: HttpUrl
-    updated: datetime = Field(default_factory=datetime_now)
+class Feed(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    url: str = Field(unique=True)
+    updated: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+    users: list["User"] = Relationship(
+        back_populates="feeds", link_model=UserFeedLink
+    )

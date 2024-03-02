@@ -1,17 +1,16 @@
 from datetime import datetime, timezone
-from uuid import UUID, uuid4
 
-from pydantic import Base64Bytes, BaseModel, Field, HttpUrl
+from sqlmodel import SQLModel, Relationship, Field
 
+from .relations import UserArticleLink
 
-def datetime_now() -> datetime:
-    return datetime.now(timezone.utc)
+class Article(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    title: str | None = Field(default=None)
+    description: str | None = None
+    url: str = Field(index=True)
+    updated: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
-
-class Article(BaseModel):
-    uid: UUID = Field(default_factory=uuid4)
-    title: str
-    body: str
-    image: Base64Bytes
-    url: HttpUrl
-    updated: datetime = Field(default_factory=datetime_now)
+    users: list["User"] = Relationship(
+        back_populates="articles", link_model=UserArticleLink
+    )

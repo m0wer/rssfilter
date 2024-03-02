@@ -1,6 +1,8 @@
 from fastapi import FastAPI
-from src.routers import feed, log
+from sqlmodel import SQLModel
 
+from src.routers import feed, log
+from src.db import engine
 
 def create_app():
     app = FastAPI()
@@ -14,3 +16,8 @@ def create_app():
 
 
 app = create_app()
+
+# on startup, setup sqlmodel
+@app.on_event("startup")
+async def startup():
+    SQLModel.metadata.create_all(engine)
