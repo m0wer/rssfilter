@@ -3,22 +3,24 @@
 There is a FastAPI backend that does the actual filtering and the Streamlit app
 is used to interact with the user.
 """
+
+from os import getenv
+from urllib.parse import quote, urljoin
+from uuid import uuid4
+
+import feedparser
 import streamlit as st
 from loguru import logger
-import feedparser
-from os import getenv
-from uuid import uuid4
-from urllib.parse import quote
 from lxml import etree
-
 
 API_BASE_URL = getenv("API_BASE_URL", "https://rssfilter.sgn.space/api/v1")
 
 logger.info("Streamlit app started")
 
+
 def get_rss_custom_feed(rss_feed_url: str, uuid: str | None = uuid4().hex) -> str:
     """Get the RSS feed from the URL."""
-    return f"{API_BASE_URL}/rss/{uuid}/{quote(rss_feed_url)}"
+    return urljoin(API_BASE_URL, f"feed/{uuid}/{quote(rss_feed_url)}")
 
 
 st.title("RSS Filter")
@@ -27,7 +29,7 @@ st.write(
     "Tired of not being able to catch up with all your RSS feeds? "
     "This app will help you filter out the noise and only show you the "
     "articles that you are interested in. Using AI and learning from your "
-    "usage patterns. Just provide your exisitng RSS feed and start using the "
+    "usage patterns. Just provide your existing RSS feed and start using the "
     "generated one instead."
 )
 
@@ -45,6 +47,7 @@ if rss_feed_url:
         logger.info(f"RSS feed is valid. Found {len(feed.entries)} entries")
         st.write(f"Here is your custom RSS feed: {get_rss_custom_feed(rss_feed_url)}")
 
+
 def get_opml_custom(opml_text: str, uuid: str | None = None) -> str:
     """Get the OPML file with custom RSS feeds."""
     # ValueError: Unicode strings with encoding declaration are not supported. Please use bytes input or XML fragments without declaration.
@@ -57,10 +60,15 @@ def get_opml_custom(opml_text: str, uuid: str | None = None) -> str:
         url = outline.get("xmlUrl")
         if url is None:
             continue
-        new_url = get_rss_custom_feed(url) if uuid is None else get_rss_custom_feed(url, uuid)
-        outline.set('xmlUrl', new_url)  # Update the XML attribute with the new URL
+        new_url = (
+            get_rss_custom_feed(url) if uuid is None else get_rss_custom_feed(url, uuid)
+        )
+        outline.set("xmlUrl", new_url)  # Update the XML attribute with the new URL
 
-    return etree.tostring(tree, pretty_print=True, xml_declaration=True, encoding="utf-8").decode("utf-8")
+    return etree.tostring(
+        tree, pretty_print=True, xml_declaration=True, encoding="utf-8"
+    ).decode("utf-8")
+
 
 # Add option to upload an OPML file with multiple feeds
 uploaded_file = st.file_uploader("Upload an OPML file", type="opml")
@@ -69,4 +77,6 @@ if uploaded_file is not None:
     uuid: str = uuid4().hex
     custom_opml = get_opml_custom(uploaded_file.getvalue().decode("utf-8"), uuid)
     # Create a download button for the new OPML file
-    st.download_button("Download your new OPML file", custom_opml, f"rssfilter-{uuid}.opml")
+    st.download_button(
+        "Download your new OPML file", custom_opml, f"rssfilter-{uuid}.opml"
+    )
