@@ -41,7 +41,7 @@ async def save_feed(user_id, feed_url):
             user.feeds.append(feed)
         session.commit()
 
-    feed_response = requests.get(feed_url)
+    feed_response = requests.get(feed_url, headers={"User-agent": "Mozilla/5.0"})
     feed = RSS(feed_response.text, user_id)
     modified_feed = feed.get_modified_rss()
     return Response(content=modified_feed, media_type="application/xml")
