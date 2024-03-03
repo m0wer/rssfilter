@@ -1,3 +1,6 @@
+[![build](https://github.com/m0wer/rssfilter/actions/workflows/docker.yaml/badge.svg)](https://github.com/m0wer/rssfilter/actions/workflows/docker.yaml)
+[![pre-commit](https://github.com/m0wer/rssfilter/actions/workflows/pre-commit.yaml/badge.svg)](https://github.com/m0wer/rssfilter/actions/workflows/pre-commit.yaml)
+
 # RSS filter
 
 This is a simple RSS filter that filters out unwanted items from an RSS feed.
