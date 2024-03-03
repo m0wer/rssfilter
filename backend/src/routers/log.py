@@ -7,7 +7,6 @@ from sqlmodel import Session, select
 from src.db import engine
 from src.models.article import Article
 from src.models.user import User
-from sqlmodel import Session, select
 
 router = APIRouter(
     prefix="/log",
