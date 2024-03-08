@@ -1,8 +1,10 @@
 import xml.etree.ElementTree as ET
+import re
 from os import getenv
 from datetime import datetime
 from pydantic import BaseModel
 import lxml.etree
+from urllib.parse import quote
 
 from sqlmodel import Session, select
 from sqlalchemy.exc import IntegrityError
@@ -107,23 +109,29 @@ class Feed(BaseModel):
                     if (
                         attr := item.find("{http://www.w3.org/2005/Atom}link")
                     ) is not None:
-                        attr.attrib["href"] = f"{LOG_URL_PREFIX}/{url}"
+                        attr.attrib["href"] = f"{LOG_URL_PREFIX}/{quote(url)}"
                     else:
-                        item.find("link").text = f"{LOG_URL_PREFIX}/{url}"
+                        item.find("link").text = f"{LOG_URL_PREFIX}/{quote(url)}"
                 if comments_url:
                     if item.find("{http://www.w3.org/2005/Atom}comments"):
                         item.find("{http://www.w3.org/2005/Atom}comments").text = (
-                            f"{LOG_URL_PREFIX}/{comments_url}"
+                            f"{LOG_URL_PREFIX}/{quote(comments_url)}"
                         )
                     else:
-                        item.find("comments").text = f"{LOG_URL_PREFIX}/{comments_url}"
+                        item.find("comments").text = (
+                            f"{LOG_URL_PREFIX}/{quote(comments_url)}"
+                        )
                 # replace all href=... in the description/content
                 if description:
                     if item.find("{http://www.w3.org/2005/Atom}content") is not None:
                         for a in item.findall(".//{http://www.w3.org/2005/Atom}a"):
-                            a.attrib["href"] = f"{LOG_URL_PREFIX}/{a.attrib['href']}"
+                            a.attrib["href"] = (
+                                f"{LOG_URL_PREFIX}/{quote(a.attrib['href'])}"
+                            )
                     else:
-                        item.find("description").text = description.replace(
-                            'href="', f'href="{LOG_URL_PREFIX}/'
+                        item.find("description").text = re.sub(
+                            r'href="(.*?)"',
+                            lambda a: f'href="{LOG_URL_PREFIX}/{quote(a.group(1))}"',
+                            description,
                         )
         return ET.tostring(feed, encoding="unicode")
