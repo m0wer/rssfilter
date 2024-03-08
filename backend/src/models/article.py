@@ -9,7 +9,8 @@ class Article(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     title: str | None = Field(default=None)
     description: str | None = None
-    url: str = Field(index=True)
+    url: str | None = Field(default=None, index=True)
+    comments_url: str | None = Field(default=None)
     updated: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     users: list["User"] = Relationship(  # noqa: F821
