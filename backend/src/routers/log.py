@@ -1,10 +1,10 @@
 from datetime import datetime, timezone
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from fastapi.responses import RedirectResponse
 from loguru import logger
 from sqlmodel import Session, select
-from src.db import engine
+from .common import get_engine
 from src.models.article import Article
 from src.models.user import User
 
@@ -16,10 +16,12 @@ router = APIRouter(
 
 
 # route to log requests to final posts urls and redirect
-@router.get("/{user_id}/{post_url:path}")
-async def log_post(user_id, post_url):
+@router.get("/{user_id}/{article_id}/{link_url:path}")
+async def log_post(
+    user_id: str, article_id: int, link_url: str, engine=Depends(get_engine)
+):
     """Log post, and redirect to the final post url"""
-    logger.info(f"User {user_id} is logging post {post_url}")
+    logger.info(f"User {user_id} is logging link {link_url} from article {article_id}")
     with Session(engine) as session:
         statement = select(User).where(User.id == user_id)
         user = session.exec(statement).first()
@@ -28,16 +30,18 @@ async def log_post(user_id, post_url):
             session.add(user)
         else:
             user.last_request = datetime.now(timezone.utc)
-        statement = select(Article).where(Article.url == post_url)
+        statement = select(Article).where(Article.id == article_id)
         article = session.exec(statement).first()
         if article is None:
-            article = Article(url=post_url)
-            session.add(article)
-        else:
-            article.updated = datetime.now(timezone.utc)
+            logger.warning(f"Article {article_id} not found")
+            return RedirectResponse(link_url)
+        article.updated = datetime.now(timezone.utc)
+        session.add(article)
 
         if article not in user.articles:
             user.articles.append(article)
+            session.add(user)
 
         session.commit()
-    return RedirectResponse(post_url)
+
+    return RedirectResponse(link_url)

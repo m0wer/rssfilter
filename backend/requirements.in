@@ -4,3 +4,6 @@ feedparser
 requests
 loguru
 sqlmodel
+pytest
+httpx
+lxml
