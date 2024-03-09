@@ -1,16 +1,16 @@
 repos:
 
-  - repo: https://github.com/jazzband/pip-tools
-    rev: 7.3.0
-    hooks:
-      - id: pip-compile
-        name: pip-compile backend
-        args: [backend/requirements.in]
-        files: backend/requirements\.(in|txt)$
-      - id: pip-compile
-        name: pip-compile frontend 
-        args: [frontend/requirements.in]
-        files: frontend/requirements\.(in|txt)$
+  #  - repo: https://github.com/jazzband/pip-tools
+  #    rev: 7.3.0
+  #    hooks:
+  #      - id: pip-compile
+  #        name: pip-compile backend
+  #        args: [backend/requirements.in]
+  #        files: backend/requirements\.(in|txt)$
+  #      - id: pip-compile
+  #        name: pip-compile frontend 
+  #        args: [frontend/requirements.in]
+  #        files: frontend/requirements\.(in|txt)$
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     # Ruff version.
