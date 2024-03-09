@@ -4,12 +4,12 @@ from fastapi import APIRouter, Depends
 from fastapi.responses import RedirectResponse
 from loguru import logger
 from sqlmodel import Session, select
-from .common import get_engine
+from .common import get_engine, RedirectResponseCoder
 from src.models.article import Article
 from src.models.user import User
+from fastapi_cache.decorator import cache
 
 router = APIRouter(
-    prefix="/log",
     tags=["log"],
     responses={404: {"description": "Not found"}},
 )
@@ -17,6 +17,7 @@ router = APIRouter(
 
 # route to log requests to final posts urls and redirect
 @router.get("/{user_id}/{article_id}/{link_url:path}")
+@cache(expire=300, coder=RedirectResponseCoder)
 async def log_post(
     user_id: str, article_id: int, link_url: str, engine=Depends(get_engine)
 ):

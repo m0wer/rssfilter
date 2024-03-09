@@ -7,6 +7,10 @@ from sqlmodel import SQLModel
 from src.routers.common import get_engine
 from src.routers import feed, log
 from loguru import logger
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
+from fastapi_cache.backends.inmemory import InMemoryBackend
+from redis import asyncio as aioredis
 
 from contextlib import asynccontextmanager
 
@@ -16,15 +20,18 @@ ROOT_PATH = getenv("ROOT_PATH", "/")
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     SQLModel.metadata.create_all(get_engine())
+    if (REDIS_URL := getenv("REDIS_URL")) is not None:
+        redis = aioredis.from_url(REDIS_URL)
+        FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")
+    else:
+        FastAPICache.init(InMemoryBackend(), prefix="fastapi-cache")
     yield
 
 
 app = FastAPI(root_path=ROOT_PATH, lifespan=lifespan)
 
-app.include_router(feed.router)
-app.include_router(feed.router, prefix="/v1")
-app.include_router(log.router, prefix="/v1")
-app.include_router(feed.router, prefix="/latest")
+app.include_router(feed.router, prefix="/v1/feed")
+app.include_router(log.router, prefix="/v1/log")
 
 
 @app.middleware("http")

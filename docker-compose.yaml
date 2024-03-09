@@ -9,6 +9,7 @@ services:
     environment:
       API_BASE_URL: "https://rssfilter.sgn.space/"
       ROOT_PATH: "/api"
+      REDIS_URL: "redis://redis:6379"
     labels:
       traefik.http.routers.backend.entrypoints: web
       traefik.http.routers.backend.rule: PathPrefix(`/api`)
@@ -16,6 +17,8 @@ services:
       traefik.http.services.backend.loadbalancer.server.port: 80
     volumes:
       - ${SQLITE_PATH:-./data/}:/app/data/
+    depends_on:
+      - redis
 
   frontend:
     image: ghcr.io/m0wer/rssfilter-frontend:master
@@ -41,3 +44,12 @@ services:
       - ${PROXY_PORT:-80}:80
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - backend
+      - frontend
+
+  redis:
+    image: redis:7-alpine
+    container_name: rssfilter-redis
+    volumes:
+      - ${REDIS_PATH:-./redis/}:/data

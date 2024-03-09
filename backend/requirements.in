@@ -1,9 +1,10 @@
 fastapi
-uvicorn
+fastapi-cache2[redis]
 feedparser
-requests
-loguru
-sqlmodel
-pytest
 httpx
+loguru
 lxml
+pytest
+requests
+sqlmodel
+uvicorn

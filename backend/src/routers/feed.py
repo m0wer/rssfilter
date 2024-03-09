@@ -6,17 +6,18 @@ from sqlmodel import Session, select
 from src.models.feed import Feed
 from src.models.user import User
 from src.modules.feed import Feed as FeedModule
-from .common import get_engine
+from .common import get_engine, XMLCoder
+from fastapi_cache.decorator import cache
 
 router = APIRouter(
-    prefix="/feed",
     tags=["feed"],
     responses={404: {"description": "Not found"}},
 )
 
 
 @router.get("/{user_id}/{feed_url:path}")
-async def get_feed(user_id, feed_url, engine=Depends(get_engine)):
+@cache(expire=300, coder=XMLCoder)
+async def get_feed(user_id, feed_url, engine=Depends(get_engine)) -> str:
     """Get filtered feed."""
     with Session(engine) as session:
         statement = select(User).where(User.id == user_id)
