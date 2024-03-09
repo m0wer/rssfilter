@@ -1,17 +1,7 @@
-FROM python:3.12-slim as base
+FROM tiangolo/uvicorn-gunicorn-fastapi:python3.11
 
-WORKDIR /app
+COPY ./requirements.txt /app/requirements.txt
 
-COPY ./requirements.txt .
+RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
 
-RUN pip install --no-cache-dir --upgrade -r requirements.txt
-
-COPY ./src ./src
-
-FROM base as dev
-
-CMD ["uvicorn", "src.server:app", "--host", "0.0.0.0", "--port", "80", "--reload"]
-
-FROM base as final
-
-CMD ["uvicorn", "src.server:app", "--host", "0.0.0.0", "--port", "80"]
+COPY ./src /app/src

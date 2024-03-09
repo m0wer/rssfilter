@@ -5,7 +5,6 @@ services:
     container_name: rssfilter-backend
     build:
       context: backend
-      target: final
     environment:
       API_BASE_URL: "https://rssfilter.sgn.space/"
       ROOT_PATH: "/api"
