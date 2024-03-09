@@ -2,12 +2,12 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import SQLModel, Session
 
-from src.models.user import User
-from src.models.feed import Feed
-from src.models.article import Article
-from src.routers.common import get_engine
+from app.models.user import User
+from app.models.feed import Feed
+from app.models.article import Article
+from app.routers.common import get_engine
 import os
-from src.server import app
+from app.main import app
 
 from sqlmodel.pool import StaticPool
 from sqlmodel import create_engine

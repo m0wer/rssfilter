@@ -3,8 +3,8 @@ import pytest
 import re
 from sqlmodel import Session, select
 
-from src.modules.feed import Feed, API_BASE_URL, ROOT_PATH
-from src.models.article import Article
+from app.modules.feed import Feed, API_BASE_URL, ROOT_PATH
+from app.models.article import Article
 
 
 class TestFeed:

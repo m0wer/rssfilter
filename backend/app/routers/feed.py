@@ -3,9 +3,9 @@ from datetime import datetime, timezone
 import requests
 from fastapi import APIRouter, Response, Depends
 from sqlmodel import Session, select
-from src.models.feed import Feed
-from src.models.user import User
-from src.modules.feed import Feed as FeedModule
+from app.models.feed import Feed
+from app.models.user import User
+from app.modules.feed import Feed as FeedModule
 from .common import get_engine, XMLCoder
 from fastapi_cache.decorator import cache
 

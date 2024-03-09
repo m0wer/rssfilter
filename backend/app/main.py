@@ -4,8 +4,8 @@ import time
 from fastapi import FastAPI, Request
 from fastapi.middleware.gzip import GZipMiddleware
 from sqlmodel import SQLModel
-from src.routers.common import get_engine
-from src.routers import feed, log
+from app.routers.common import get_engine
+from app.routers import feed, log
 from loguru import logger
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend

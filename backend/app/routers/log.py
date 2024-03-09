@@ -5,8 +5,8 @@ from fastapi.responses import RedirectResponse
 from loguru import logger
 from sqlmodel import Session, select
 from .common import get_engine, RedirectResponseCoder
-from src.models.article import Article
-from src.models.user import User
+from app.models.article import Article
+from app.models.user import User
 from fastapi_cache.decorator import cache
 
 router = APIRouter(

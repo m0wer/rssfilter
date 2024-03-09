@@ -1,8 +1,8 @@
 from urllib.parse import quote
-from src.server import app
+from app.main import app
 
-from src.models.user import User
-from src.models.article import Article
+from app.models.user import User
+from app.models.article import Article
 
 from sqlmodel import Session, select
 
