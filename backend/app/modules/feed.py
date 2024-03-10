@@ -42,7 +42,7 @@ class Feed(BaseModel):
 
     @retry(
         stop=stop_after_attempt(3),
-        wait=wait_exponential(multiplier=2, min=0.1, max=1),
+        wait=wait_exponential(multiplier=2, min=1, max=10),
         retry=retry_if_exception_type(OperationalError),
         before_sleep=before_sleep_log(logger, logging.INFO),
         reraise=True,
