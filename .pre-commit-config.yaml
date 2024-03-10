@@ -1,35 +1,18 @@
 repos:
 
-  #  - repo: https://github.com/jazzband/pip-tools
-  #    rev: 7.3.0
-  #    hooks:
-  #      - id: pip-compile
-  #        name: pip-compile backend
-  #        args: [backend/requirements.in]
-  #        files: backend/requirements\.(in|txt)$
-  #      - id: pip-compile
-  #        name: pip-compile frontend 
-  #        args: [frontend/requirements.in]
-  #        files: frontend/requirements\.(in|txt)$
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  # Ruff version.
+  rev: v0.3.0
+  hooks:
+    # Run the linter.
+    - id: ruff
+      args: [ --fix ]
+    # Run the formatter.
+    - id: ruff-format
 
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    # Ruff version.
-    rev: v0.3.0
-    hooks:
-      # Run the linter.
-      - id: ruff
-        args: [ --fix ]
-      # Run the formatter.
-      - id: ruff-format
-
-  - repo: https://github.com/psf/black-pre-commit-mirror
-    rev: 24.2.0
-    hooks:
-      - id: black
-        name: black
-        description: "Black code formatter"
-        entry: black
-        language: python
-        minimum_pre_commit_version: 2.9.2
-        require_serial: true
-        types_or: [python, pyi]
+- repo: https://github.com/pre-commit/mirrors-mypy
+  rev: 'v1.9.0'
+  hooks:
+    - id: mypy
+      # add types-requests
+      additional_dependencies: [ 'types-requests' ]

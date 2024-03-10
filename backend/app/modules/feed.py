@@ -114,13 +114,13 @@ class Feed(BaseModel):
                         item.find("link").text = f"{LOG_URL_PREFIX}/{quote(url)}"
                 if comments_url:
                     if item.find("{http://www.w3.org/2005/Atom}comments"):
-                        item.find("{http://www.w3.org/2005/Atom}comments").text = (
-                            f"{LOG_URL_PREFIX}/{quote(comments_url)}"
-                        )
+                        item.find(
+                            "{http://www.w3.org/2005/Atom}comments"
+                        ).text = f"{LOG_URL_PREFIX}/{quote(comments_url)}"
                     else:
-                        item.find("comments").text = (
-                            f"{LOG_URL_PREFIX}/{quote(comments_url)}"
-                        )
+                        item.find(
+                            "comments"
+                        ).text = f"{LOG_URL_PREFIX}/{quote(comments_url)}"
                 # replace all href=... in the description/content
                 if description:
                     if item.find("{http://www.w3.org/2005/Atom}content") is not None:
