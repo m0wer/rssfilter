@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet href="https://www.diariodepozuelo.es/components/com_joomrss/assets/xsl/atom-to-html.xsl" type="text/xsl"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:media="http://search.yahoo.com/mrss/">
+	<channel>
+		<title>Noticias destacadas en Diario de Pozuelo</title>
+		<description></description>
+		<link>https://www.diariodepozuelo.es/</link>
+		<lastBuildDate>Sun, 10 Mar 2024 19:34:17 +0100</lastBuildDate>
+		<generator>FeedCreator 1.8.3 (joomRSS 5.1.0)</generator>
+		<atom:link href="https://www.diariodepozuelo.es/index.php?option=com_joomrss&amp;task=feed&amp;id=2:noticias-destacadas-en-diario-de-pozuelo&amp;format=feed&amp;Itemid=5196" rel="self" type="application/rss+xml" />
+		<language>en-GB</language>
+		<item>
+			<title>Jornada en el MIRA con destacadas mujeres líderes de Pozuelo por el Día Internacional de la Mujer</title>
+			<link>https://www.diariodepozuelo.es/112947-jornada-en-el-mira-con-destacadas-mujeres-lideres-de-pozuelo-por-el-dia-internacional-de-la-mujer</link>
+			<description><![CDATA[<div>
+<p><img height="320" width="640" src="https://www.diariodepozuelo.es/images/stories/noticias/2024/03/240308-mujeres-pozuelo.jpg" alt="240308 mujeres pozuelo" width="1600" height="900" style="float: right;" loading="lazy" />En un destacado evento organizado por el Ayuntamiento de Pozuelo de Alarcón en conmemoración del Día Internacional de la Mujer, se reunieron tres destacadas mujeres líderes de la localidad.</p>
+]]></description>
+			<dc:creator>Alejandro Moreno</dc:creator>
+			<pubDate>Fri, 08 Mar 2024 10:13:45 +0100</pubDate>
+			<guid isPermaLink="false">https://www.diariodepozuelo.es/112947-jornada-en-el-mira-con-destacadas-mujeres-lideres-de-pozuelo-por-el-dia-internacional-de-la-mujer</guid>
+		</item>
+		<item>
+			<title>50 vecinas artistas exponen sus obras en el Centro Cultural Padre Vallet</title>
+			<link>https://www.diariodepozuelo.es/112946-50-vecinas-artistas-exponen-sus-obras-en-el-centro-cultural-padre-vallet</link>
+			<description><![CDATA[<div>
+<p><img height="320" width="640" src="https://www.diariodepozuelo.es/images/stories/noticias/2024/03/240308-exposicion-mujeres-pintoras.jpg" alt="240308 exposicion mujeres pintoras" width="1600" height="900" style="float: right;" loading="lazy" />Un grupo de cincuenta artistas de Pozuelo de Alarcón presenta sus creaciones en el Centro Cultural Padre Vallet de la localidad. La muestra "Mujeres Artistas" exhibe obras de 50 artistas locales o con vínculos con la ciudad en disciplinas como pintura, escultura, fotografía e instalaciones, con motivo de la conmemoración del Día Internacional de la Mujer de esta semana.</p>
+]]></description>
+			<dc:creator>Miguel Muñoz</dc:creator>
+			<pubDate>Fri, 08 Mar 2024 10:07:48 +0100</pubDate>
+			<guid isPermaLink="false">https://www.diariodepozuelo.es/112946-50-vecinas-artistas-exponen-sus-obras-en-el-centro-cultural-padre-vallet</guid>
+		</item>
+		<item>
+			<title>Las deportistas de Pozuelo logran importantes victorias a nivel nacional en diversas disciplinas</title>
+			<link>https://www.diariodepozuelo.es/112945-las-deportistas-de-pozuelo-logran-importantes-victorias-a-nivel-nacional-en-diversas-disciplinas</link>
+			<description><![CDATA[<p><img height="320" width="640" src="https://www.diariodepozuelo.es/images/stories/noticias/2024/01/240130-maria-torrego-esgrima-pozuelo.jpg" alt="" style="float: right;" loading="lazy" />Pozuelo de Alarcón ha destacado por sus logros deportivos, convirtiéndose en un referente en competiciones nacionales de diversas disciplinas. En la última temporada, se han obtenido importantes victorias en el ámbito nacional.</p>
+]]></description>
+			<dc:creator>Miguel Muñoz</dc:creator>
+			<pubDate>Tue, 05 Mar 2024 11:15:21 +0100</pubDate>
+			<guid isPermaLink="false">https://www.diariodepozuelo.es/112945-las-deportistas-de-pozuelo-logran-importantes-victorias-a-nivel-nacional-en-diversas-disciplinas</guid>
+		</item>
+		<item>
+			<title>Tejero se reúne con el consejero de Digitalización para abordar las necesidades del municipio</title>
+			<link>https://www.diariodepozuelo.es/112942-tejero-se-reune-con-el-consejero-de-digitalizacion-de-la-comunidad-para-abordar-las-necesidades-del-municipio</link>
+			<description><![CDATA[<p><img height="320" width="640" src="https://www.diariodepozuelo.es/images/stories/noticias/2024/03/240301-visitaconsejero.jpg" alt="240301 visitaconsejero" width="1600" height="900" style="float: right;" loading="lazy" />La alcaldesa de Pozuelo de Alarcón, Paloma Tejero, y el consejero de Digitalización de la Comunidad de Madrid, Miguel López-Valverde, sostuvieron una reunión el viernes en el Vivero de Empresas INNPAR de la ciudad para discutir las medidas del Gobierno regional en digitalización y abordar las necesidades del municipio en este ámbito.</p>
+]]></description>
+			<dc:creator>Miguel Muñoz</dc:creator>
+			<pubDate>Tue, 05 Mar 2024 08:56:17 +0100</pubDate>
+			<guid isPermaLink="false">https://www.diariodepozuelo.es/112942-tejero-se-reune-con-el-consejero-de-digitalizacion-de-la-comunidad-para-abordar-las-necesidades-del-municipio</guid>
+		</item>
+		<item>
+			<title>Nuevo proyecto de reforestación eficiente en el Aula de Educación Ambiental</title>
+			<link>https://www.diariodepozuelo.es/112938-pozuelo-presenta-un-nuevo-proyecto-de-reforestacion-eficiente-en-el-aula-de-educacion-ambiental</link>
+			<description><![CDATA[<div>
+<p><img height="320" width="640" src="https://www.diariodepozuelo.es/images/stories/noticias/2024/02/240301-aula-educacion-ambiental.jpg" alt="240301 aula educacion ambiental" width="1600" height="900" style="float: right;" loading="lazy" />El Ayuntamiento de Pozuelo de Alarcón y LG España han acordado colaborar en un proyecto de reforestación eficiente en el Aula de Educación Ambiental de la ciudad.</p>
+]]></description>
+			<dc:creator>Alejandro Moreno</dc:creator>
+			<pubDate>Fri, 01 Mar 2024 09:26:11 +0100</pubDate>
+			<guid isPermaLink="false">https://www.diariodepozuelo.es/112938-pozuelo-presenta-un-nuevo-proyecto-de-reforestacion-eficiente-en-el-aula-de-educacion-ambiental</guid>
+		</item>
+		<item>
+			<title>VOX Pozuelo rechaza la nueva plaza de toros: “No es el momento ni el lugar&quot;</title>
+			<link>https://www.diariodepozuelo.es/112937-vox-pozuelo-rechaza-la-nueva-plaza-de-toros-no-es-el-momento-ni-el-lugar-para-esta-construccion</link>
+			<description><![CDATA[<p><img height="320" width="640" src="https://www.diariodepozuelo.es/images/stories/noticias/2024/02/240229-ainhoa-garcia-plaza-toros-pozuelo-alarcon.jpg" alt="240229 ainhoa garcia plaza toros pozuelo alarcon" width="1600" height="900" style="float: right;" loading="lazy" />Ainhoa García, portavoz de VOX en el Ayuntamiento de Pozuelo de Alarcón ha publicado en un vídeo en redes sociales defenciendo la postura de su formación sobre el proyecto del Gobierno del Partido Popular para construir una plaza de toros en la calle San Juan de la Cruz.</p>
+]]></description>
+			<dc:creator>Blas Barrado</dc:creator>
+			<pubDate>Thu, 29 Feb 2024 09:29:00 +0100</pubDate>
+			<guid isPermaLink="false">https://www.diariodepozuelo.es/112937-vox-pozuelo-rechaza-la-nueva-plaza-de-toros-no-es-el-momento-ni-el-lugar-para-esta-construccion</guid>
+		</item>
+		<item>
+			<title>El Ayuntamiento de Pozuelo y Metro Ligero Oeste firman un convenio por la sostenibilidad</title>
+			<link>https://www.diariodepozuelo.es/112935-el-ayuntamiento-de-pozuelo-y-metro-ligero-oeste-firman-un-convenio-por-la-sostenibilidad</link>
+			<description><![CDATA[<p><img height="320" width="640" src="https://www.diariodepozuelo.es/images/stories/noticias/2024/02/240227-convenio-metro-ligero.jpg" alt="240227 convenio metro ligero" width="1600" height="900" style="float: right;" loading="lazy" />El Ayuntamiento de Pozuelo de Alarcón ha reafirmado a través de un comunicado remitido a los medios su compromiso con la sostenibilidad y la movilidad sostenible tras suscribir un convenio de colaboración con Metro Ligero Oeste.</p>
+]]></description>
+			<dc:creator>Blas Barrado</dc:creator>
+			<pubDate>Wed, 28 Feb 2024 09:35:58 +0100</pubDate>
+			<guid isPermaLink="false">https://www.diariodepozuelo.es/112935-el-ayuntamiento-de-pozuelo-y-metro-ligero-oeste-firman-un-convenio-por-la-sostenibilidad</guid>
+		</item>
+	</channel>
+</rss>

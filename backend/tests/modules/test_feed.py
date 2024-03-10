@@ -22,6 +22,15 @@ class TestFeed:
                     "http://pubsubhubbub.appspot.com/",
                 ],
             ),
+            (
+                "diariodepozuelo.es.xml",
+                [
+                    "https://www.diariodepozuelo.es/",
+                    "https://www.diariodepozuelo.es/index.php?"
+                    "option=com_joomrss&amp;task=feed&amp;id=2:noticias-destacadas-en-diario-de-pozuelo"
+                    "&amp;format=feed&amp;Itemid=5196",
+                ],
+            ),
         ],
     )
     def test_get_modified_rss(self, feed_string_path, excluded_links, engine):
