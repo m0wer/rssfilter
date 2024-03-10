@@ -7,12 +7,10 @@ from app.models.feed import Feed
 from app.models.article import Article
 from app.routers.common import get_engine
 import os
-from app.main import app
+from app.main import app, ROOT_PATH
 
 from sqlmodel.pool import StaticPool
 from sqlmodel import create_engine
-
-ROOT_PATH = os.getenv("ROOT_PATH", "/")
 
 if not os.path.exists("data"):
     os.makedirs("data")

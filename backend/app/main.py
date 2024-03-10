@@ -14,7 +14,7 @@ from redis import asyncio as aioredis
 
 from contextlib import asynccontextmanager
 
-ROOT_PATH = getenv("ROOT_PATH", "/")
+ROOT_PATH = getenv("ROOT_PATH", "")
 
 
 @asynccontextmanager
