@@ -7,7 +7,6 @@ loguru
 lxml
 pytest
 pytest-cov
-requests
 sqlmodel
 tenacity
 uvicorn

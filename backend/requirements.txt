@@ -24,9 +24,6 @@ certifi==2024.2.2
     # via
     #   httpcore
     #   httpx
-    #   requests
-charset-normalizer==3.3.2
-    # via requests
 click==8.1.7
     # via uvicorn
 coverage[toml]==7.4.3
@@ -61,7 +58,6 @@ idna==3.6
     # via
     #   anyio
     #   httpx
-    #   requests
     #   yarl
 iniconfig==2.0.0
     # via pytest
@@ -97,8 +93,6 @@ python-dateutil==2.9.0.post0
     #   time-machine
 redis==4.6.0
     # via fastapi-cache2
-requests==2.31.0
-    # via -r requirements.in
 sgmllib3k==1.0.0
     # via feedparser
 six==1.16.0
@@ -131,8 +125,6 @@ typing-extensions==4.10.0
     #   uvicorn
 tzdata==2024.1
     # via pendulum
-urllib3==2.2.1
-    # via requests
 uvicorn==0.27.1
     # via
     #   -r requirements.in
