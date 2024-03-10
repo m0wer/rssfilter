@@ -1,3 +1,4 @@
+aiohttp
 fastapi
 fastapi-cache2[redis]
 feedparser
@@ -5,8 +6,8 @@ httpx
 loguru
 lxml
 pytest
+pytest-cov
 requests
 sqlmodel
+tenacity
 uvicorn
-pytest
-pytest-cov

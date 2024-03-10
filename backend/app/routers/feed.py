@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-import requests
+from aiohttp import ClientSession
 from fastapi import APIRouter, Response, Depends
 from sqlmodel import Session, select
 from app.models.feed import Feed
@@ -38,7 +38,11 @@ async def get_feed(user_id, feed_url, engine=Depends(get_engine)) -> str:
             user.feeds.append(feed_module)
         session.commit()
 
-    feed_response = requests.get(feed_url, headers={"User-agent": "Mozilla/5.0"})
-    feed_module = FeedModule(feed_string=feed_response.text, engine=engine)
+    async with ClientSession() as session:
+        async with session.get(
+            feed_url, headers={"User-agent": "Mozilla/5.0"}
+        ) as response:
+            feed_response = await response.text()
+    feed_module = FeedModule(feed_string=feed_response, engine=engine)
     modified_feed = feed_module.get_modified_feed(user_id=user_id)
     return Response(content=modified_feed, media_type="application/xml")

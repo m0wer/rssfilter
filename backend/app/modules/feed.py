@@ -11,6 +11,14 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy import Engine
 from loguru import logger
 
+from tenacity import (
+    retry,
+    stop_after_attempt,
+    wait_exponential,
+    retry_if_exception_type,
+)
+from sqlalchemy.exc import OperationalError
+
 
 from ..models.article import Article
 
@@ -30,6 +38,11 @@ class Feed(BaseModel):
     feed_string: str
     engine: Engine
 
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=2, min=0.1, max=1),
+        retry=retry_if_exception_type(OperationalError),
+    )
     def get_modified_feed(self, user_id: str) -> str:
         """Get the modified feed with the links replaced by the log API endpoint links.
 
