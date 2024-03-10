@@ -8,3 +8,5 @@ pytest
 requests
 sqlmodel
 uvicorn
+pytest
+pytest-cov
