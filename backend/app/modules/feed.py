@@ -9,6 +9,7 @@ from urllib.parse import quote
 from sqlmodel import Session, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import Engine
+import logging
 from loguru import logger
 
 from tenacity import (
@@ -16,6 +17,7 @@ from tenacity import (
     stop_after_attempt,
     wait_exponential,
     retry_if_exception_type,
+    before_sleep_log,
 )
 from sqlalchemy.exc import OperationalError
 
@@ -42,6 +44,8 @@ class Feed(BaseModel):
         stop=stop_after_attempt(3),
         wait=wait_exponential(multiplier=2, min=0.1, max=1),
         retry=retry_if_exception_type(OperationalError),
+        before_sleep=before_sleep_log(logger, logging.INFO),
+        reraise=True,
     )
     def get_modified_feed(self, user_id: str) -> str:
         """Get the modified feed with the links replaced by the log API endpoint links.
