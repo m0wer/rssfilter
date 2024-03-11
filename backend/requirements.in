@@ -5,8 +5,13 @@ feedparser
 httpx
 loguru
 lxml
+numpy
 pytest
 pytest-cov
+scikit-learn
+scipy
 sqlmodel
 tenacity
+transformers
+torch
 uvicorn

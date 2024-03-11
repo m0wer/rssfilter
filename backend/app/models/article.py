@@ -12,6 +12,7 @@ class Article(SQLModel, table=True):
     url: str | None = Field(default=None, index=True)
     comments_url: str | None = Field(default=None)
     updated: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    embedding: str | None = Field(default=None)
 
     users: list["User"] = Relationship(  # noqa: F821
         back_populates="articles", link_model=UserArticleLink
