@@ -12,7 +12,7 @@ if not os.path.exists("data"):
 
 def get_engine():
     return create_engine(
-        "sqlite:///data/db.sqlite",
+        os.getenv("DATABASE_URL", "sqlite:///data/db.sqlite"),
         connect_args={"check_same_thread": False},
         echo=bool(os.getenv("DEBUG", False)),
     )

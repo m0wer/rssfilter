@@ -1,29 +1,43 @@
 import torch
+import random
 from transformers import AutoTokenizer, AutoModel
 from sklearn.cluster import KMeans
 from scipy.spatial.distance import cdist
 import numpy as np
+from rich.progress import track
 
 from .models.article import Article
+
+
+def _compute_embedding(article: Article, model_name: str) -> None:
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    model = AutoModel.from_pretrained(model_name)
+
+    text = (article.title or "") + " " + (article.description or "")
+
+    if not text.strip():
+        raise RuntimeError("Article has no content to embed")
+
+    inputs = tokenizer(
+        text,
+        return_tensors="pt",
+        padding=True,
+        truncation=True,
+        max_length=512,
+    )
+    with torch.no_grad():
+        outputs = model(**inputs)
+    article.embedding = outputs.pooler_output[0].numpy()
 
 
 def compute_embeddings(
     articles: list[Article], model_name: str = "intfloat/multilingual-e5-large-instruct"
 ) -> None:
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
-    model = AutoModel.from_pretrained(model_name)
-
-    for article in articles:
-        inputs = tokenizer(
-            (article.title or "") + " " + (article.description or ""),
-            return_tensors="pt",
-            padding=True,
-            truncation=True,
-            max_length=512,
-        )
-        with torch.no_grad():
-            outputs = model(**inputs)
-        article.embedding = outputs.pooler_output[0].numpy()
+    for article in track(articles, description="Computing embeddings..."):
+        if article.embedding:
+            continue
+        if article.embedding is None:
+            _compute_embedding(article, model_name)
 
 
 def cluster_articles(articles: list[Article], n_clusters: int) -> KMeans:
@@ -33,8 +47,34 @@ def cluster_articles(articles: list[Article], n_clusters: int) -> KMeans:
 
 
 def filter_articles(
-    articles: list[Article], read_articles: list[Article], filter_ratio: float = 0.5
+    articles: list[Article],
+    read_articles: list[Article],
+    filter_ratio: float = 0.5,
+    random_ratio: float = 0.1,
+    n_clusters: int = 10,
 ) -> list[Article]:
+    """Filter out articles according to the user's preferences.
+
+    This function tries to return a list of articles that are most relevant to
+    the user's interests. It does so by clustering the read articles and then
+    calculating the distance of each passed article to the closest cluster. The
+    articles are then sorted by this distance and the top `filter_ratio` fraction
+    of articles are returned. A small fraction of random articles are also included
+    to add some diversity and allow for discovery of new topics.
+
+    If there aren't enough read articles to form clusters, the original list of
+    articles is returned identically.
+
+    Args:
+        articles: List of articles to filter.
+        read_articles: List of articles that the user has read.
+        filter_ratio: Fraction of articles to return (default 0.5).
+        random_ratio: Fraction of random articles to include (default 0.1).
+        n_clusters: Number of clusters to use for clustering (default 10).
+
+    Returns:
+        List of articles sorted by relevance
+    """
     # Assuming read_articles are not empty and have valid embeddings,
     # you may want to compute_embeddings for them if not already done.
     compute_embeddings(read_articles)
@@ -45,7 +85,12 @@ def filter_articles(
     )  # Avoid too many clusters for few articles, adjust as necessary
     kmeans = cluster_articles(read_articles, n_clusters)
 
-    # Compute embeddings for passed articles
+    random.shuffle(articles)
+    n_random = int(len(articles) * random_ratio)
+    random_articles = articles[:n_random]
+    del articles[:n_random]
+
+    # Compute missing embeddings for passed articles
     compute_embeddings(articles)
 
     # Calculate distance of each passed article to the closest cluster
@@ -61,4 +106,8 @@ def filter_articles(
 
     # Filter out articles based on the filter_ratio
     num_to_filter = int(len(sorted_articles) * filter_ratio)
-    return sorted_articles[:num_to_filter]
+    return sorted(
+        sorted_articles[:num_to_filter] + random_articles,
+        key=lambda x: x.pub_date or x.updated,
+        reverse=True,
+    )

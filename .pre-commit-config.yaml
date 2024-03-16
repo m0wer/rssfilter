@@ -15,4 +15,4 @@ repos:
   hooks:
     - id: mypy
       # add types-requests
-      additional_dependencies: [ 'types-requests' ]
+      additional_dependencies: [ 'types-requests', 'types-dateparser' ]
