@@ -1,4 +1,5 @@
 aiohttp
+dateparser
 fastapi
 fastapi-cache2[redis]
 feedparser
@@ -8,10 +9,12 @@ lxml
 numpy
 pytest
 pytest-cov
+rich
 scikit-learn
 scipy
 sqlmodel
 tenacity
-transformers
 torch
+transformers
+typer
 uvicorn

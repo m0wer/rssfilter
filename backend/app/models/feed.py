@@ -13,3 +13,4 @@ class Feed(SQLModel, table=True):
     users: list["User"] = Relationship(  # noqa: F821
         back_populates="feeds", link_model=UserFeedLink
     )
+    articles: list["Article"] = Relationship(back_populates="feed")  # noqa: F821

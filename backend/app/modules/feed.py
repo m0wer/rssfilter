@@ -2,6 +2,7 @@ import xml.etree.ElementTree as ET
 import re
 from os import getenv
 from datetime import datetime
+import dateparser
 from pydantic import BaseModel
 import lxml.etree
 from urllib.parse import quote
@@ -23,6 +24,7 @@ from sqlalchemy.exc import OperationalError
 
 
 from ..models.article import Article
+from ..models.feed import Feed as FeedModel
 
 API_BASE_URL = getenv("API_BASE_URL", "https://rssfilter.sgn.space/").rstrip("/")
 ROOT_PATH = getenv("ROOT_PATH", "/").lstrip("/")
@@ -90,11 +92,32 @@ class Feed(BaseModel):
                     "text",
                     None,
                 )
+                pub_date = dateparser.parse(
+                    getattr(
+                        item.find("pubDate"),
+                        "text",
+                        None,
+                    )
+                    or getattr(
+                        item.find("{http://www.w3.org/2005/Atom}published"),
+                        "text",
+                        None,
+                    )
+                )
+                feed_model = session.exec(
+                    select(FeedModel).where(FeedModel.url == self.feed_string)
+                ).first()
+                if not feed_model:
+                    feed_model = FeedModel(url=self.feed_string)
+                    session.add(feed_model)
+                    session.commit()
                 article = Article(
                     title=title,
                     url=url,
                     description=description,
                     comments_url=comments_url,
+                    pub_date=pub_date,
+                    feed_id=feed_model.id,
                 )
                 session.add(article)
                 try:
@@ -114,6 +137,12 @@ class Feed(BaseModel):
                         modified = True
                     if not article.comments_url and comments_url:
                         article.comments_url = comments_url
+                        modified = True
+                    if not article.pub_date and pub_date:
+                        article.pub_date = pub_date
+                        modified = True
+                    if not article.feed_id and feed_model.id:
+                        article.feed_id = feed_model.id
                         modified = True
                     if modified:
                         article.updated = datetime.now()
