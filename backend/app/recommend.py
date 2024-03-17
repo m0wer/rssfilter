@@ -6,38 +6,50 @@ from scipy.spatial.distance import cdist
 import numpy as np
 from rich.progress import track
 
+from loguru import logger
+
 from .models.article import Article
 
 
-def _compute_embedding(article: Article, model_name: str) -> None:
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
-    model = AutoModel.from_pretrained(model_name)
-
-    text = (article.title or "") + " " + (article.description or "")
-
-    if not text.strip():
-        raise RuntimeError("Article has no content to embed")
-
+def _batch_compute_embeddings(articles, model, tokenizer):
+    texts = [
+        (article.title or "") + " " + (article.description or "")
+        for article in articles
+    ]
     inputs = tokenizer(
-        text,
+        texts,
         return_tensors="pt",
         padding=True,
         truncation=True,
         max_length=512,
-    )
+    ).to(model.device)
+
     with torch.no_grad():
         outputs = model(**inputs)
-    article.embedding = outputs.pooler_output[0].numpy()
+
+    embeddings = outputs.pooler_output.cpu().numpy()
+    for i, article in enumerate(articles):
+        article.embedding = embeddings[i]
 
 
 def compute_embeddings(
     articles: list[Article], model_name: str = "intfloat/multilingual-e5-large-instruct"
 ) -> None:
-    for article in track(articles, description="Computing embeddings..."):
-        if article.embedding:
-            continue
-        if article.embedding is None:
-            _compute_embedding(article, model_name)
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    model = AutoModel.from_pretrained(model_name).cuda()
+
+    articles_to_embed = [article for article in articles if article.embedding is None]
+    if not articles_to_embed:
+        logger.info("All articles already have embeddings.")
+        return
+    batch_size = 32  # Adjust based on your GPU memory
+
+    for i in track(
+        range(0, len(articles_to_embed), batch_size),
+        description="Computing embeddings...",
+    ):
+        batch_articles = articles_to_embed[i : i + batch_size]
+        _batch_compute_embeddings(batch_articles, model, tokenizer)
 
 
 def cluster_articles(articles: list[Article], n_clusters: int) -> KMeans:
