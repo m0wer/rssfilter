@@ -20,7 +20,7 @@ router = APIRouter(
 @cache(expire=300, coder=XMLCoder)
 async def get_feed(user_id, feed_url, engine=Depends(get_engine)) -> str:
     """Get filtered feed."""
-    with Session(engine) as session:
+    with Session(engine, autoflush=False) as session:
         statement = select(User).where(User.id == user_id)
         user = session.exec(statement).first()
         if user is None:

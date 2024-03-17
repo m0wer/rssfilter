@@ -23,7 +23,7 @@ async def log_post(
 ):
     """Log post, and redirect to the final post url"""
     logger.info(f"User {user_id} is logging link {link_url} from article {article_id}")
-    with Session(engine) as session:
+    with Session(engine, autoflush=False) as session:
         statement = select(User).where(User.id == user_id)
         user = session.exec(statement).first()
         if user is None:

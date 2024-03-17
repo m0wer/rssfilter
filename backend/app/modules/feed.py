@@ -58,7 +58,7 @@ class Feed(BaseModel):
         parser = lxml.etree.XMLParser(recover=True)
         feed = ET.fromstring(self.feed_string, parser=parser)
 
-        with Session(self.engine) as session:
+        with Session(self.engine, autoflush=False) as session:
             for item in feed.findall(".//item") or feed.findall(
                 ".//{http://www.w3.org/2005/Atom}entry"
             ):
