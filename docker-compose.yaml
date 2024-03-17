@@ -24,8 +24,9 @@ services:
       resources:
         reservations:
           devices:
-            - capabilities:
-              - gpu
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
 
   frontend:
     image: ghcr.io/m0wer/rssfilter-frontend:master
