@@ -9,7 +9,7 @@ class Article(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     title: str
     description: str
-    url: str = Field(default=None, index=True)
+    url: str = Field(default=None, index=True, unique=True)
     comments_url: str | None = Field(default=None)
     pub_date: datetime | None = Field(default=None)
     updated: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
