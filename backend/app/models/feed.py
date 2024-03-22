@@ -1,7 +1,11 @@
 from datetime import datetime, timezone
+from aiohttp.client_exceptions import ClientError
+from pydantic.networks import HttpUrl
 import xml.etree.ElementTree as ET
 from feedgen.feed import FeedGenerator
 from collections.abc import Iterator
+import feedparser
+from aiohttp import ClientSession
 
 import re
 import dateparser
@@ -136,3 +140,39 @@ def generate_feed(feed: Feed, articles: list[Article], user_id: str) -> str:
             fe.pubDate(article.pub_date.replace(tzinfo=timezone.utc))
 
     return fg.rss_str(pretty=True).decode("utf-8")
+
+
+class UpstreamError(Exception):
+    pass
+
+
+async def parse_feed(feed_url: HttpUrl) -> Feed:
+    """Register a new feed."""
+    async with ClientSession() as aiohttp_session:
+        try:
+            async with aiohttp_session.get(
+                str(feed_url), headers={"User-agent": "Mozilla/5.0"}
+            ) as response:
+                response.raise_for_status()
+                feed_response = await response.text()
+        except ClientError as e:
+            raise UpstreamError(f"Error fetching feed: {e}") from e
+    parsed = feedparser.parse(feed_response)
+    feed = Feed(
+        url=str(feed_url),
+        title=parsed.feed.get("title"),
+        description=parsed.feed.get("description"),
+        logo=parsed.feed.get("logo"),
+        language=parsed.feed.get("language"),
+        articles=[
+            Article(
+                title=entry.title,
+                url=entry.link,
+                description=entry.description,
+                comments_url=entry.get("comments"),
+                pub_date=dateparser.parse(entry.published),
+            )
+            for entry in parsed.entries
+        ],
+    )
+    return feed
