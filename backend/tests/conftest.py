@@ -23,6 +23,8 @@ def setup_db(engine):
         feed = Feed(
             id=1,
             url="https://news.ycombinator.com/rss",
+            title="Hacker News",
+            description="Hacker News RSS feed",
             users=[user],
         )
         article = Article(

@@ -10,7 +10,7 @@ from loguru import logger
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 from fastapi_cache.backends.inmemory import InMemoryBackend
-from redis import asyncio as aioredis
+from redis import asyncio as aioredis  # type: ignore
 
 from contextlib import asynccontextmanager
 

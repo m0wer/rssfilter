@@ -2,6 +2,7 @@ aiohttp
 dateparser
 fastapi
 fastapi-cache2[redis]
+feedgen
 feedparser
 httpx
 loguru

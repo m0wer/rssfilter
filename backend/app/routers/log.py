@@ -24,15 +24,13 @@ async def log_post(
     """Log post, and redirect to the final post url"""
     logger.info(f"User {user_id} is logging link {link_url} from article {article_id}")
     with Session(engine, autoflush=False) as session:
-        statement = select(User).where(User.id == user_id)
-        user = session.exec(statement).first()
+        user = session.exec(select(User).where(User.id == user_id)).first()
         if user is None:
             user = User(id=user_id)
             session.add(user)
         else:
             user.last_request = datetime.now(timezone.utc)
-        statement = select(Article).where(Article.id == article_id)
-        article = session.exec(statement).first()
+        article = session.exec(select(Article).where(Article.id == article_id)).first()
         if article is None:
             logger.warning(f"Article {article_id} not found")
             return RedirectResponse(link_url)
