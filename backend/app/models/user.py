@@ -10,9 +10,9 @@ class User(SQLModel, table=True):
     first_request: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     last_request: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
-    articles: list["Article"] = Relationship(  # noqa: F821
+    articles: list["Article"] = Relationship(  # type: ignore  # noqa: F821
         back_populates="users", link_model=UserArticleLink
     )
-    feeds: list["Feed"] = Relationship(  # noqa: F821
+    feeds: list["Feed"] = Relationship(  # type: ignore  # noqa: F821
         back_populates="users", link_model=UserFeedLink
     )

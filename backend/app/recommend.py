@@ -36,7 +36,10 @@ def compute_embeddings(
     articles: list[Article], model_name: str = "intfloat/multilingual-e5-large-instruct"
 ) -> None:
     tokenizer = AutoTokenizer.from_pretrained(model_name)
-    model = AutoModel.from_pretrained(model_name).cuda()
+    model = AutoModel.from_pretrained(model_name)
+
+    if torch.cuda.is_available():
+        model.to("cuda")
 
     articles_to_embed = [article for article in articles if article.embedding is None]
     if not articles_to_embed:

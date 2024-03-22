@@ -12,28 +12,25 @@ from sqlmodel import Session, select
 
 class TestFeed:
     @pytest.mark.parametrize(
-        "feed_url,feed_type,has_comments",
+        "feed_url,has_comments",
         [
-            ("https://news.ycombinator.com/rss", '<rss version="2.0">', True),
+            ("https://news.ycombinator.com/rss", True),
             (
                 "https://www.diariodepozuelo.es/index.php?"
                 "option=com_joomrss&task=feed&id=2:noticias-destacadas-en-diario-de-pozuelo"
                 "&format=feed&Itemid=5196",
-                '<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:ns0="http://www.w3.org/2005/Atom" version="2.0">',
                 False,
             ),
         ],
     )
-    def test_get_feed(
-        self, client, root_path, engine, feed_url, feed_type, has_comments
-    ):
+    def test_get_feed(self, client, root_path, engine, feed_url, has_comments):
         user_id = "00000000000000000000000000000000"
         with client:
             response = client.get(
                 app.url_path_for("get_feed", feed_url=quote(feed_url), user_id=user_id)
             )
         assert response.status_code == 200
-        assert response.text.startswith(feed_type)
+        assert response.text.startswith("<?xml version='1.0' encoding='UTF-8'?>")
         assert f"/log/{user_id}" in response.text
 
         with Session(engine) as session:
@@ -56,3 +53,23 @@ class TestFeed:
                 assert article.updated
                 if has_comments:
                     assert article.comments_url
+
+    def test_get_feed_not_found(self, client, root_path):
+        user_id = "00000000000000000000000000000000"
+        with client:
+            response = client.get(
+                app.url_path_for(
+                    "get_feed",
+                    feed_url=quote("https://example.com/404"),
+                    user_id=user_id,
+                )
+            )
+        assert response.status_code == 502
+
+    def test_get_feed_invalid_url(self, client, root_path):
+        user_id = "00000000000000000000000000000000"
+        with client:
+            response = client.get(
+                app.url_path_for("get_feed", feed_url="invalid", user_id=user_id)
+            )
+        assert response.status_code == 422
