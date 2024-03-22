@@ -19,8 +19,8 @@ COPY . .
 
 FROM base as dev
 
-ENTRYPOINT ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0", "--browser.gatherUsageStats=False", "--logger.level=debug", "--server.enableCORS=false"]
+ENTRYPOINT ["streamlit", "run", "frontend.py", "--server.port=8501", "--server.address=0.0.0.0", "--browser.gatherUsageStats=False", "--logger.level=debug", "--server.enableCORS=false"]
 
 FROM base as final
 
-ENTRYPOINT ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0", "--browser.gatherUsageStats=False", "--logger.level=debug"]
+ENTRYPOINT ["streamlit", "run", "frontend.py", "--server.port=8501", "--server.address=0.0.0.0", "--browser.gatherUsageStats=False", "--logger.level=debug"]
