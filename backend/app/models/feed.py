@@ -158,6 +158,8 @@ async def parse_feed(feed_url: HttpUrl) -> Feed:
         except ClientError as e:
             raise UpstreamError(f"Error fetching feed: {e}") from e
     parsed = feedparser.parse(feed_response)
+    if not parsed.title:
+        raise UpstreamError("Incorrect feed format.")
     feed = Feed(
         url=str(feed_url),
         title=parsed.feed.get("title"),
