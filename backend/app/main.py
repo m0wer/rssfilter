@@ -28,6 +28,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(root_path=f"/{ROOT_PATH}" if ROOT_PATH else "", lifespan=lifespan)
+logger.debug(f"Root path: {app.root_path}")
 
 app.include_router(feed.router, prefix="/v1/feed")
 app.include_router(log.router, prefix="/v1/log")
