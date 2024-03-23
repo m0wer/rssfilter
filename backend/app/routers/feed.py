@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 from pydantic.networks import HttpUrl
 from fastapi import APIRouter, Response, Depends
 from sqlmodel import Session, select
+from loguru import logger
 from app.models.feed import Feed, generate_feed, parse_feed, UpstreamError
 from app.models.user import User
 from .common import get_engine
@@ -22,13 +23,18 @@ router = APIRouter(
 async def get_feed(user_id: str, feed_url: HttpUrl, engine=Depends(get_engine)) -> str:
     """Get filtered feed."""
     with Session(engine, autoflush=False) as session:
+        user = User(id=user_id)
+        session.add(user)
         try:
-            user: User = session.exec(select(User).where(User.id == user_id)).one()
-        except NoResultFound:
-            user = User(id=user_id)
-            session.add(user)
-        else:
+            session.commit()
+        except Exception as e:
+            logger.warning(f"Failed to add user {user_id} to database: {e}")
+            session.rollback()
+            user = session.exec(select(User).where(User.id == user_id)).one()
             user.last_request = datetime.now(timezone.utc)
+
+        session.commit()
+
         try:
             feed: Feed = session.exec(
                 select(Feed).where(Feed.url == str(feed_url))
@@ -39,6 +45,12 @@ async def get_feed(user_id: str, feed_url: HttpUrl, engine=Depends(get_engine)) 
             except UpstreamError as e:
                 return Response(content=str(e), status_code=502)
             session.add(feed)
+            try:
+                session.commit()
+            except Exception as e:
+                logger.warning(f"Failed to add feed {feed_url} to database: {e}")
+                session.rollback()
+                feed = session.exec(select(Feed).where(Feed.url == str(feed_url))).one()
         if feed not in user.feeds:
             user.feeds.append(feed)
         session.commit()
