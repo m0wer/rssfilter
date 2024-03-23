@@ -17,6 +17,7 @@ services:
       traefik.http.services.backend.loadbalancer.server.port: 80
     volumes:
       - ${SQLITE_PATH:-./data/}:/app/data/
+      - ${HUGGINGFACE_CACHE:-./huggingface/}:/root/.cache/huggingface/
     depends_on:
       - redis
     restart: unless-stopped
