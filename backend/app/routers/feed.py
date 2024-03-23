@@ -6,8 +6,9 @@ from sqlmodel import Session, select
 from app.models.feed import Feed, generate_feed, parse_feed, UpstreamError
 from app.models.user import User
 from .common import get_engine
-from fastapi_cache.coder import PickleCoder
-from fastapi_cache.decorator import cache
+
+# from fastapi_cache.coder import PickleCoder
+# from fastapi_cache.decorator import cache
 from sqlalchemy.orm.exc import NoResultFound
 
 router = APIRouter(
@@ -17,7 +18,7 @@ router = APIRouter(
 
 
 @router.get("/{user_id}/{feed_url:path}")
-@cache(expire=300, coder=PickleCoder)
+# @cache(expire=300, coder=PickleCoder)
 async def get_feed(user_id: str, feed_url: HttpUrl, engine=Depends(get_engine)) -> str:
     """Get filtered feed."""
     with Session(engine, autoflush=False) as session:
