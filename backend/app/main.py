@@ -27,7 +27,7 @@ async def lifespan(app: FastAPI):
     yield
 
 
-app = FastAPI(root_path=ROOT_PATH, lifespan=lifespan)
+app = FastAPI(root_path=f"/{ROOT_PATH}" if ROOT_PATH else "", lifespan=lifespan)
 
 app.include_router(feed.router, prefix="/v1/feed")
 app.include_router(log.router, prefix="/v1/log")

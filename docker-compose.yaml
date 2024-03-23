@@ -7,7 +7,7 @@ services:
       context: backend
     environment:
       API_BASE_URL: "https://rssfilter.sgn.space/"
-      ROOT_PATH: "/api"
+      ROOT_PATH: "/api/"
       REDIS_URL: "redis://redis:6379"
       MAX_WORKERS: ${MAX_WORKERS}
     labels:
