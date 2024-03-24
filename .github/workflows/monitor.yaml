@@ -1,8 +1,8 @@
 name: monitor backend
 
 on:
-  cron:
-    - '47 * * * *'
+  schedule:
+    - cron: '16 * * * *'
 
 jobs:
   monitor-backend:
