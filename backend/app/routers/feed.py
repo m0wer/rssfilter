@@ -40,6 +40,9 @@ async def get_feed(user_id: str, feed_url: HttpUrl, engine=Depends(get_engine)) 
                 select(Feed).where(Feed.url == str(feed_url))
             ).one()
         except NoResultFound:
+            logger.info(
+                f"Feed {feed_url} not found in database, fetching from upstream"
+            )
             try:
                 feed = await parse_feed(feed_url)
             except UpstreamError as e:

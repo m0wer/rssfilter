@@ -112,19 +112,22 @@ def generate_feed(feed: Feed, articles: list[Article], user_id: str) -> str:
     Returns:
         str: The modified feed.
     """
+    logger.debug(f"Generating custom feed for {feed.url}, for user {user_id}")
     fg = FeedGenerator()
     fg.id(feed.url)
     fg.title(feed.title)
     fg.description(feed.description or feed.title)
-    fg.logo("http://ex.com/logo.jpg")
+    fg.logo(feed.logo)
     fg.link(
-        href=f"{API_BASE_URL}{ROOT_PATH}/v1/feed/{user_id}/{feed.url}",
+        href=f"{API_BASE_URL}/{ROOT_PATH}/v1/feed/{user_id}/{feed.url}",
         rel="self",
     )
     fg.language(feed.language)
     for article in articles:
-        logger.debug(f"Parsing article: {article}")
-        LOG_URL_PREFIX: str = f"{API_BASE_URL}{ROOT_PATH}/v1/log/{user_id}/{article.id}"
+        logger.debug(f"Replacing links for article: {article}")
+        LOG_URL_PREFIX: str = (
+            f"{API_BASE_URL}/{ROOT_PATH}/v1/log/{user_id}/{article.id}"
+        )
         fe = fg.add_entry()
         fe.id(article.url)
         fe.title(article.title)

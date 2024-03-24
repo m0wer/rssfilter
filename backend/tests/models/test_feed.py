@@ -55,8 +55,8 @@ class TestFeed:
         assert articles[0].title in generated_feed
         assert articles[1].title in generated_feed
 
-        LOG_URL_PREFIX: str = f"{API_BASE_URL}{ROOT_PATH}/v1/log/{user_id}/"
-        FEED_URL_PREFIX: str = f"{API_BASE_URL}{ROOT_PATH}/v1/feed/{user_id}/"
+        LOG_URL_PREFIX: str = f"{API_BASE_URL}/{ROOT_PATH}/v1/log/{user_id}/"
+        FEED_URL_PREFIX: str = f"{API_BASE_URL}/{ROOT_PATH}/v1/feed/{user_id}/"
 
         matches = re.findall(
             r'href=["\']([^"\']+)["\']|<link>([^<]+)</link>|<comments>([^<]+)</comments>',
