@@ -51,6 +51,7 @@ async def get_feed(user_id: str, feed_url: HttpUrl, engine=Depends(get_engine)) 
             try:
                 session.commit()
             except Exception as e:
+                # might happen if the feed was created before by another thread
                 logger.warning(f"Failed to add feed {feed_url} to database: {e}")
                 session.rollback()
                 feed = session.exec(select(Feed).where(Feed.url == str(feed_url))).one()
