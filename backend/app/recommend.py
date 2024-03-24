@@ -1,3 +1,4 @@
+import json
 import torch
 import random
 from transformers import AutoTokenizer, AutoModel
@@ -29,7 +30,7 @@ def _batch_compute_embeddings(articles, model, tokenizer):
 
     embeddings = outputs.pooler_output.cpu().numpy()
     for i, article in enumerate(articles):
-        article.embedding = embeddings[i]
+        article.embedding = json.dumps(embeddings[i].tolist())
 
 
 def compute_embeddings(
@@ -56,7 +57,9 @@ def compute_embeddings(
 
 
 def cluster_articles(articles: list[Article], n_clusters: int) -> KMeans:
-    X = np.array([article.embedding for article in articles])
+    X = np.array(
+        [json.loads(article.embedding) for article in articles if article.embedding]
+    )
     kmeans = KMeans(n_clusters=n_clusters, random_state=0).fit(X)
     return kmeans
 
@@ -109,7 +112,9 @@ def filter_articles(
     compute_embeddings(articles)
 
     # Calculate distance of each passed article to the closest cluster
-    articles_embeddings = np.array([article.embedding for article in articles])
+    articles_embeddings = np.array(
+        [json.loads(article.embedding) for article in articles if article.embedding]
+    )
     distances = cdist(articles_embeddings, kmeans.cluster_centers_, metric="euclidean")
     min_distances = distances.min(axis=1)
 

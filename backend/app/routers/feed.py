@@ -4,6 +4,7 @@ from sqlmodel import Session, select
 from loguru import logger
 from app.models.feed import Feed, generate_feed, parse_feed, UpstreamError
 from app.models.user import User
+from app.recommend import filter_articles
 from .common import get_engine
 
 # from fastapi_cache.coder import PickleCoder
@@ -59,8 +60,12 @@ async def get_feed(user_id: str, feed_url: HttpUrl, engine=Depends(get_engine)) 
             user.feeds.append(feed)
         session.commit()
 
-        # select the last 20 articles
-        articles = feed.articles[-20:]
+        if len(user.articles) > 10:
+            articles = filter_articles(
+                articles=feed.articles[-30:], read_articles=user.articles
+            )
+        else:
+            articles = feed.articles[-30:]
 
         custom_feed = generate_feed(feed, articles, user_id)
 

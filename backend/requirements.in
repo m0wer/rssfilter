@@ -9,6 +9,7 @@ loguru
 lxml
 numpy
 pytest
+pytest-asyncio
 pytest-cov
 rich
 scikit-learn
