@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, BackgroundTasks
 from fastapi.responses import RedirectResponse
 from loguru import logger
 from sqlmodel import Session, select
@@ -15,13 +15,7 @@ router = APIRouter(
 )
 
 
-# route to log requests to final posts urls and redirect
-@router.get("/{user_id}/{article_id}/{link_url:path}")
-@cache(expire=300, coder=RedirectResponseCoder)
-async def log_post(
-    user_id: str, article_id: int, link_url: str, engine=Depends(get_engine)
-):
-    """Log post, and redirect to the final post url"""
+def log_link(user_id: str, article_id: int, link_url: str, engine) -> None:
     logger.info(f"User {user_id} is logging link {link_url} from article {article_id}")
     with Session(engine, autoflush=False) as session:
         user = session.exec(select(User).where(User.id == user_id)).first()
@@ -43,4 +37,17 @@ async def log_post(
 
         session.commit()
 
+
+# route to log requests to final posts urls and redirect
+@router.get("/{user_id}/{article_id}/{link_url:path}")
+@cache(expire=300, coder=RedirectResponseCoder)
+async def log_post(
+    user_id: str,
+    article_id: int,
+    link_url: str,
+    background_tasks: BackgroundTasks,
+    engine=Depends(get_engine),
+):
+    """Log post, and redirect to the final post url"""
+    background_tasks.add_task(log_link, user_id, article_id, link_url, engine)
     return RedirectResponse(link_url)
