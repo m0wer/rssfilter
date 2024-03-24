@@ -119,6 +119,7 @@ def generate_feed(feed: Feed, articles: list[Article], user_id: str) -> str:
     fg.description(feed.description or feed.title)
     fg.logo(feed.logo)
     fg.link(
+        # TODO: doesn't work with empty ROOT_PATH
         href=f"{API_BASE_URL}/{ROOT_PATH}/v1/feed/{user_id}/{feed.url}",
         rel="self",
     )
