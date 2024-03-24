@@ -1,5 +1,3 @@
-from datetime import datetime, timezone
-
 from pydantic.networks import HttpUrl
 from fastapi import APIRouter, Response, Depends
 from sqlmodel import Session, select
@@ -23,17 +21,19 @@ router = APIRouter(
 async def get_feed(user_id: str, feed_url: HttpUrl, engine=Depends(get_engine)) -> str:
     """Get filtered feed."""
     with Session(engine, autoflush=False) as session:
-        user = User(id=user_id)
-        session.add(user)
         try:
-            session.commit()
-        except Exception as e:
-            logger.warning(f"Failed to add user {user_id} to database: {e}")
-            session.rollback()
-            user = session.exec(select(User).where(User.id == user_id)).one()
-            user.last_request = datetime.now(timezone.utc)
-
-        session.commit()
+            user: User = session.exec(select(User).where(User.id == user_id)).one()
+        except NoResultFound:
+            logger.info(f"User {user_id} not found in database, creating new user")
+            user = User(id=user_id)
+            session.add(user)
+            try:
+                session.commit()
+            except Exception as e:
+                # might happen if the user was created before by another thread
+                logger.warning(f"Failed to add user {user_id} to database: {e}")
+                session.rollback()
+                user = session.exec(select(User).where(User.id == user_id)).one()
 
         try:
             feed: Feed = session.exec(
