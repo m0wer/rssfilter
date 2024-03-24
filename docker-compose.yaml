@@ -10,6 +10,7 @@ services:
       ROOT_PATH: "/api/"
       REDIS_URL: "redis://redis:6379"
       MAX_WORKERS: ${MAX_WORKERS}
+      LOGURU_LEVEL: ${LOGURU_LEVEL:-INFO}
     labels:
       traefik.http.routers.backend.entrypoints: web
       traefik.http.routers.backend.rule: PathPrefix(`/api`)
