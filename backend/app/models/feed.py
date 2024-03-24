@@ -26,10 +26,12 @@ class Feed(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     url: str = Field(unique=True)
     title: str
-    logo: str | None = None
-    description: str
-    language: str | None = None
-    updated: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    logo: str | None = Field(repr=False)
+    description: str = Field(repr=False)
+    language: str | None = Field(default=None, repr=False)
+    updated: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc), repr=False
+    )
 
     users: list["User"] = Relationship(  # type: ignore # noqa: F821
         back_populates="feeds", link_model=UserFeedLink
