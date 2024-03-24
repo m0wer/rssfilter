@@ -2,6 +2,8 @@ name: test backend
 
 on:
   push:
+    paths:
+      - 'backend/**'
 
 jobs:
   test-backend:
