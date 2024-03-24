@@ -1,4 +1,5 @@
 import asyncio
+import time
 import typer
 from sqlmodel import create_engine
 import os
@@ -47,6 +48,7 @@ def fetch_feeds():
         feeds = session.query(Feed).all()
         for feed in feeds:
             logger.info(f"Fetching {feed.url}")
+            start = time.time()
             try:
                 parsed_feed = asyncio.run(parse_feed(feed.url))
                 logger.debug(f"Found {len(parsed_feed.articles)} articles")
@@ -64,6 +66,7 @@ def fetch_feeds():
                 logger.error(e)
             finally:
                 session.commit()
+            logger.info(f"Elapsed time: {time.time() - start:.2f}s")
 
 
 if __name__ == "__main__":
