@@ -18,6 +18,7 @@ COPY ./app /app/app
 WORKDIR /app/
 
 ENV PYTHONPATH=/app
+ENV DATABASE_URL=sqlite:///data/db.sqlite
 
 EXPOSE 80
 

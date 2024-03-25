@@ -1,4 +1,5 @@
 aiohttp
+alembic
 dateparser
 fastapi
 fastapi-cache2[redis]
