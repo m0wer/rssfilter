@@ -4,6 +4,7 @@ fastapi
 fastapi-cache2[redis]
 feedgen
 feedparser
+gunicorn
 httpx
 loguru
 lxml
@@ -16,7 +17,7 @@ scikit-learn
 scipy
 sqlmodel
 tenacity
-torch
+torch==2.2.1
 transformers
 typer
 uvicorn

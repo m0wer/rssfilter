@@ -43,5 +43,6 @@ Now you can access http://localhost on port 80, where traefik will redirect
 ## Development
 
 ```shell
+cd backend
 python -m uvicorn app.main:app --reload --log-level debug --port 8000
 ```
