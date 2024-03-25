@@ -1,5 +1,8 @@
 [![build](https://github.com/m0wer/rssfilter/actions/workflows/docker.yaml/badge.svg)](https://github.com/m0wer/rssfilter/actions/workflows/docker.yaml)
 [![pre-commit](https://github.com/m0wer/rssfilter/actions/workflows/pre-commit.yaml/badge.svg)](https://github.com/m0wer/rssfilter/actions/workflows/pre-commit.yaml)
+[![build](https://github.com/m0wer/rssfilter/actions/workflows/test.yaml/badge.svg)](https://github.com/m0wer/rssfilter/actions/workflows/test.yaml)
+[![build](https://github.com/m0wer/rssfilter/actions/workflows/monitor.yaml/badge.svg)](https://github.com/m0wer/rssfilter/actions/workflows/monitor.yaml)
+
 
 # RSS filter
 
@@ -28,11 +31,7 @@ You can install these hooks with `pre-commit install` and run them on demand by 
 There is a `Dockerfile` inside both `frontend` and `backend` folders.
 The `backend` image is multistage, thus be careful of building dev or final as `target`.
 
-
 ## docker-compose
-
-The development setup runs on `docker compose -f dev.docker-compose.yaml up --build` behind a traefik proxy.
-The backend is hot-reloaded, while for streamlit changes you need to rebuild the container.
 
 ```shell
 docker compose up
@@ -41,12 +40,8 @@ docker compose up
 Now you can access http://localhost on port 80, where traefik will redirect
 `/` to the frontend and `/api` to the backend (without stripping the prefix)
 
-## Roadmap
+## Development
 
-- [ ] Database
-    - [ ] users (id)
-    - [ ] feeds (id, url)
-    - [ ] users_to_feeds (id, user_id, feed_id)
-    - [ ] articles (id, title, body, ~image)
-    - [ ] feed_to_articles (id, feed_id, article_id)
-- [ ] Some persistance on what articles the user has read
+```shell
+python -m uvicorn app.main:app --reload --log-level debug --port 8000
+```
