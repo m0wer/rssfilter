@@ -96,13 +96,14 @@ def filter_articles(
     random_articles = articles[:n_random]
     del articles[:n_random]
 
-    # Compute missing embeddings for passed articles
-    compute_embeddings(articles)
-
+    articles_embeddings_list = [
+        json.loads(article.embedding) for article in articles if article.embedding
+    ]
+    if not articles_embeddings_list:
+        logger.warning("No embeddings found for articles. Returning articles as is.")
+        return articles
     # Calculate distance of each passed article to the closest cluster
-    articles_embeddings = np.array(
-        [json.loads(article.embedding) for article in articles if article.embedding]
-    )
+    articles_embeddings = np.array(articles_embeddings_list)
     distances = cdist(articles_embeddings, cluster_centers, metric="euclidean")
     min_distances = distances.min(axis=1)
 
