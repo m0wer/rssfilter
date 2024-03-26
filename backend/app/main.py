@@ -3,8 +3,6 @@ import time
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.gzip import GZipMiddleware
-from sqlmodel import SQLModel
-from app.routers.common import get_engine
 from app.routers import feed, log
 from app.constants import ROOT_PATH
 from loguru import logger
@@ -18,8 +16,6 @@ from contextlib import asynccontextmanager
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    SQLModel.metadata.create_all(get_engine())
-    logger.info("DB setup done")
     if (REDIS_URL := getenv("REDIS_URL")) is not None:
         redis = aioredis.from_url(REDIS_URL)
         FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")
