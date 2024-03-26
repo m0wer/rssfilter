@@ -77,7 +77,9 @@ def clusters():
             if len(user.articles) < 10:
                 logger.debug(f"User {user.id} has less than 10 articles, skipping.")
                 continue
-            logger.info(f"Computing clusters for {user.id}")
+            logger.info(
+                f"Computing clusters for {user.id}, {len(user.articles)} articles"
+            )
             start = time.time()
             try:
                 cluster_centers = cluster_articles(user.articles).cluster_centers_

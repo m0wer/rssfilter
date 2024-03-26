@@ -1,9 +1,11 @@
 from pydantic.networks import HttpUrl
+import json
 from fastapi import APIRouter, Response, Depends
 from sqlmodel import Session, select
 from loguru import logger
 from app.models.feed import Feed, generate_feed, parse_feed, UpstreamError
 from app.models.user import User
+from app.recommend import filter_articles
 from .common import get_engine
 
 # from fastapi_cache.coder import PickleCoder
@@ -61,6 +63,19 @@ async def get_feed(user_id: str, feed_url: HttpUrl, engine=Depends(get_engine)) 
 
         articles = feed.articles[-30:]
 
-        custom_feed = generate_feed(feed, articles, user_id)
+        if user.clusters:
+            filtered_articles = filter_articles(
+                articles=articles, cluster_centers=json.loads(user.clusters)
+            )
+            logger.debug(
+                f"Returning {len(filtered_articles)}/{len(articles)} articles for user {user_id}"
+            )
+        else:
+            logger.debug(
+                f"No cluster centers found for user {user_id}, returning all articles"
+            )
+            filtered_articles = articles
+
+        custom_feed = generate_feed(feed, filtered_articles, user_id)
 
     return Response(content=custom_feed, media_type="application/xml")
