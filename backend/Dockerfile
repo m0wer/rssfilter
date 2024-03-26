@@ -14,7 +14,7 @@ ENV PYTHONUNBUFFERED=1
 COPY ./requirements.in /app/requirements.in
 RUN pip install --no-cache-dir -r /app/requirements.in
 
-COPY ./app /app/app
+COPY ./ /app/
 WORKDIR /app/
 
 ENV PYTHONPATH=/app
