@@ -1,24 +1,23 @@
 import asyncio
 import time
+import json
 import typer
-from sqlmodel import create_engine
+from sqlmodel import create_engine, select
 import os
 from sqlmodel import Session, SQLModel
+from datetime import datetime, timezone
+from rich.progress import track
 
 from .models.article import Article  # noqa: F401
 from .models.feed import Feed, parse_feed  # noqa: F401
 from .models.user import User  # noqa: F401
-from .recommend import compute_embeddings
+from .recommend import compute_embeddings, cluster_articles
 from loguru import logger
 
 models = [Article, Feed, User]
 
-DATABASE_URL = os.getenv("DATABASE_URL")
-if not DATABASE_URL:
-    raise RuntimeError("DATABASE_URL is not set")
-
 ENGINE = create_engine(
-    DATABASE_URL,
+    os.getenv("DATABASE_URL", "sqlite:///data/db.sqlite"),
     echo=bool(os.getenv("DEBUG", False)),
     connect_args={"check_same_thread": False},
 )
@@ -62,6 +61,28 @@ def fetch_feeds():
                     except Exception:
                         logger.debug(f"Article {article.title} already exists")
                         session.rollback()
+            except Exception as e:
+                logger.error(e)
+            finally:
+                session.commit()
+            logger.info(f"Elapsed time: {time.time() - start:.2f}s")
+
+
+@cli.command()
+def clusters():
+    """Compute clusters for all users."""
+    with Session(ENGINE) as session:
+        users = session.exec(select(User)).all()
+        for user in track(users, description="Computing clusters..."):
+            if len(user.articles) < 10:
+                logger.debug(f"User {user.id} has less than 10 articles, skipping.")
+                continue
+            logger.info(f"Computing clusters for {user.id}")
+            start = time.time()
+            try:
+                cluster_centers = cluster_articles(user.articles).cluster_centers_
+                user.clusters = json.dumps(cluster_centers.tolist())
+                user.clusters_updated_at = datetime.now(timezone.utc)
             except Exception as e:
                 logger.error(e)
             finally:

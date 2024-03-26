@@ -1,4 +1,4 @@
-from app.recommend import filter_articles
+from app.recommend import filter_articles, cluster_articles, compute_embeddings
 
 
 from app.models.article import Article
@@ -35,12 +35,14 @@ class TestRecommend:
                 description="Stay calm and carry on",
             ),
         ]
+        compute_embeddings(articles=read_articles)
+        compute_embeddings(articles=articles_to_filter)
+        kmeans = cluster_articles(articles=read_articles, n_clusters=1)
         filtered_articles = filter_articles(
             articles=articles_to_filter,
-            read_articles=read_articles,
+            cluster_centers=kmeans.cluster_centers_,
             filter_ratio=0.5,
             random_ratio=0,
-            n_clusters=1,
         )
         assert len(filtered_articles) == 1
         assert filtered_articles[0].id == 4

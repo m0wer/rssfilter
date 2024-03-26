@@ -1,10 +1,10 @@
 import json
+import numpy as np
 import torch
 import random
 from transformers import AutoTokenizer, AutoModel
 from sklearn.cluster import KMeans
 from scipy.spatial.distance import cdist
-import numpy as np
 from rich.progress import track
 
 from loguru import logger
@@ -56,20 +56,19 @@ def compute_embeddings(
         _batch_compute_embeddings(batch_articles, model, tokenizer)
 
 
-def cluster_articles(articles: list[Article], n_clusters: int) -> KMeans:
+def cluster_articles(articles: list[Article], n_clusters: int = 10) -> KMeans:
     X = np.array(
         [json.loads(article.embedding) for article in articles if article.embedding]
     )
-    kmeans = KMeans(n_clusters=n_clusters, random_state=0).fit(X)
+    kmeans = KMeans(n_clusters=n_clusters, random_state=42).fit(X)
     return kmeans
 
 
 def filter_articles(
     articles: list[Article],
-    read_articles: list[Article],
+    cluster_centers: np.ndarray,
     filter_ratio: float = 0.5,
     random_ratio: float = 0.1,
-    n_clusters: int = 10,
 ) -> list[Article]:
     """Filter out articles according to the user's preferences.
 
@@ -88,21 +87,10 @@ def filter_articles(
         read_articles: List of articles that the user has read.
         filter_ratio: Fraction of articles to return (default 0.5).
         random_ratio: Fraction of random articles to include (default 0.1).
-        n_clusters: Number of clusters to use for clustering (default 10).
 
     Returns:
         List of articles sorted by relevance
     """
-    # Assuming read_articles are not empty and have valid embeddings,
-    # you may want to compute_embeddings for them if not already done.
-    compute_embeddings(read_articles)
-
-    # Cluster the read articles
-    n_clusters = min(
-        len(read_articles), 10
-    )  # Avoid too many clusters for few articles, adjust as necessary
-    kmeans = cluster_articles(read_articles, n_clusters)
-
     random.shuffle(articles)
     n_random = int(len(articles) * random_ratio)
     random_articles = articles[:n_random]
@@ -115,7 +103,7 @@ def filter_articles(
     articles_embeddings = np.array(
         [json.loads(article.embedding) for article in articles if article.embedding]
     )
-    distances = cdist(articles_embeddings, kmeans.cluster_centers_, metric="euclidean")
+    distances = cdist(articles_embeddings, cluster_centers, metric="euclidean")
     min_distances = distances.min(axis=1)
 
     # Sort articles by distance to the closest cluster

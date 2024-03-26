@@ -8,8 +8,7 @@ from sqlmodel import Session, select
 
 
 class TestLog:
-    def test_log_post(self, client, root_path, engine):
-        user_id = "00000000000000000000000000000000"
+    def test_log_post(self, client, root_path, engine, test_user_id):
         link_url = "https://www.example.com"
         article_id = 1
         with client:
@@ -17,14 +16,14 @@ class TestLog:
                 app.url_path_for(
                     "log_post",
                     link_url=quote(link_url),
-                    user_id=user_id,
+                    user_id=test_user_id,
                     article_id=article_id,
                 )
             )
         assert response.request.url == link_url
 
         with Session(engine) as session:
-            user = session.exec(select(User).where(User.id == user_id)).first()
+            user = session.exec(select(User).where(User.id == test_user_id)).first()
             assert user is not None
 
             article = session.exec(

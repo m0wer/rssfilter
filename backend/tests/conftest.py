@@ -15,11 +15,18 @@ from sqlmodel import create_engine
 if not os.path.exists("data"):
     os.makedirs("data")
 
+TEST_USER_ID: str = "test"
+
+
+@pytest.fixture
+def test_user_id():
+    return TEST_USER_ID
+
 
 def setup_db(engine):
     SQLModel.metadata.create_all(engine)
     with Session(engine) as session:
-        user = User(id="00000000000000000000000000000000")
+        user = User(id=TEST_USER_ID)
         feed = Feed(
             id=1,
             url="https://news.ycombinator.com/rss",

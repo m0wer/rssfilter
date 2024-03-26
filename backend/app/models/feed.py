@@ -29,7 +29,10 @@ class Feed(SQLModel, table=True):
     logo: str | None = Field(repr=False)
     description: str = Field(repr=False)
     language: str | None = Field(default=None, repr=False)
-    updated: datetime = Field(
+    created_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc), repr=False
+    )
+    updated_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc), repr=False
     )
 

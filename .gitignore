@@ -163,3 +163,4 @@ cython_debug/
 *.sqlite
 redis/
 backend/junit/
+backend/data/
