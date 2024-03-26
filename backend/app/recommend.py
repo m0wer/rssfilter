@@ -91,7 +91,7 @@ def filter_articles(
     Returns:
         List of articles sorted by relevance
     """
-    random.shuffle(articles)
+    random.Random(42).shuffle(articles)
     n_random = int(len(articles) * random_ratio)
     random_articles = articles[:n_random]
     del articles[:n_random]
