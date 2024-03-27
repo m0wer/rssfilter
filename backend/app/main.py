@@ -3,7 +3,7 @@ import time
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.gzip import GZipMiddleware
-from app.routers import feed, log
+from app.routers import feed, log, signup
 from app.constants import ROOT_PATH
 from loguru import logger
 from fastapi_cache import FastAPICache
@@ -29,6 +29,7 @@ logger.debug(f"Root path: {app.root_path}")
 
 app.include_router(feed.router, prefix="/v1/feed")
 app.include_router(log.router, prefix="/v1/log")
+app.include_router(signup.router, prefix="/v1/signup")
 
 
 @app.middleware("http")
