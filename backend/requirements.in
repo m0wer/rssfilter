@@ -13,6 +13,7 @@ numpy
 pytest
 pytest-asyncio
 pytest-cov
+python-multipart
 rich
 scikit-learn
 scipy

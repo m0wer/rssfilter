@@ -73,11 +73,11 @@ h11==0.14.0
     # via
     #   httpcore
     #   uvicorn
-httpcore==1.0.4
+httpcore==1.0.5
     # via httpx
 httpx==0.27.0
     # via -r requirements.in
-huggingface-hub==0.22.0
+huggingface-hub==0.22.1
     # via
     #   tokenizers
     #   transformers
@@ -187,6 +187,8 @@ python-dateutil==2.9.0.post0
     #   feedgen
     #   pendulum
     #   time-machine
+python-multipart==0.0.9
+    # via -r requirements.in
 pytz==2024.1
     # via dateparser
 pyyaml==6.0.1
@@ -253,7 +255,7 @@ transformers==4.39.1
     # via -r requirements.in
 triton==2.2.0
     # via torch
-typer==0.10.0
+typer==0.11.0
     # via -r requirements.in
 typing-extensions==4.10.0
     # via
