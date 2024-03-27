@@ -1,5 +1,6 @@
 from fastapi import UploadFile
 from fastapi import APIRouter, Response, Depends
+from pydantic import BaseModel
 from sqlmodel import Session, select
 from loguru import logger
 from app.models.user import User
@@ -19,8 +20,13 @@ router = APIRouter(
 )
 
 
-@router.post("/user/{user_id}", status_code=201)
-def register_user(user_id: str, engine=Depends(get_engine)):
+class ResgisterUserResponse(BaseModel):
+    user_id: str
+
+
+@router.post("/user", status_code=201)
+def register_user(engine=Depends(get_engine)) -> ResgisterUserResponse:
+    user_id: str = uuid4().hex
     with Session(engine, autoflush=False) as session:
         try:
             user: User = session.exec(select(User).where(User.id == user_id)).one()
@@ -35,7 +41,7 @@ def register_user(user_id: str, engine=Depends(get_engine)):
                 logger.warning(f"Failed to add user {user_id} to database: {e}")
                 session.rollback()
                 user = session.exec(select(User).where(User.id == user_id)).one()
-    return user_id
+    return ResgisterUserResponse(user_id=user.id)
 
 
 def get_rss_custom_feed(rss_feed_url: str, uuid: str | None = uuid4().hex) -> str:
