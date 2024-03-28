@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<opml version="1.0">
+    <head>
+        <title>Sample OPML file</title>
+    </head>
+    <body>
+        <outline title="News" text="News">
+            <outline text="The Verge" title="The Verge" type="rss" xmlUrl="https://www.theverge.com/rss/index.xml"/>
+        </outline>
+
+        <outline title="Tech" text="Tech">
+            <outline text="Hacker News" title="Hacker News" type="rss" xmlUrl="https://news.ycombinator.com/rss"/>
+        </outline>
+    </body>
+</opml>

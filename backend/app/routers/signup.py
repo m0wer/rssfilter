@@ -41,7 +41,7 @@ def register_user(engine=Depends(get_engine)) -> ResgisterUserResponse:
                 logger.warning(f"Failed to add user {user_id} to database: {e}")
                 session.rollback()
                 user = session.exec(select(User).where(User.id == user_id)).one()
-    return ResgisterUserResponse(user_id=user.id)
+        return ResgisterUserResponse(user_id=user.id)
 
 
 def get_rss_custom_feed(rss_feed_url: str, uuid: str | None = uuid4().hex) -> str:
@@ -75,7 +75,11 @@ def get_opml_custom(opml_text: str, uuid: str | None = None) -> str:
 
 
 @router.post("/process_opml")
-def process_opml(user_id: str, opml: UploadFile, engine=Depends(get_engine)):
+def process_opml(
+    opml: UploadFile, user_id: str | None = None, engine=Depends(get_engine)
+):
+    if user_id is None:
+        user_id = uuid4().hex
     with Session(engine, autoflush=False) as session:
         try:
             user: User = session.exec(select(User).where(User.id == user_id)).one()
