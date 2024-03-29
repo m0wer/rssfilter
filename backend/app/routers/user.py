@@ -1,4 +1,6 @@
 from fastapi import APIRouter, Response, Depends
+from sklearn.decomposition import PCA
+import plotly.express as px
 from typing import Any
 from pydantic import BaseModel
 from sqlmodel import Session, select
@@ -70,4 +72,78 @@ def get_user_clusters(
                 ]
                 for cluster_id, articles in enumerate(cluster_articles)
             },
+        )
+
+
+@router.get("/user/{user_id}/clusters_2d")
+def get_user_clusters_2d(user_id: str, engine=Depends(get_engine)):
+    """Return a 2D PNG image of the user's clusters.
+
+    The image includes the read articles colored by their cluster and a legend
+    with the article titles. Using plotly express to create the plot. Represent
+    cluster areas with filling colors and articles with markers. No text labels
+    for the articles, as the legend is used for that purpose.
+
+    The cluster centers are also represented in the plot.
+
+    Uses PCA for dimensionality reduction to 2D.
+    """
+    with Session(engine, autoflush=False) as session:
+        try:
+            user: User = session.exec(select(User).where(User.id == user_id)).one()
+        except NoResultFound:
+            return Response(status_code=404, content=f"User '{user_id}' not found")
+
+        articles_embeddings_list = [
+            json.loads(article.embedding)
+            for article in user.articles
+            if article.embedding
+        ]
+        if not articles_embeddings_list or not user.clusters:
+            logger.warning(
+                "No embeddings found for articles. Returning articles as is."
+            )
+            return Response(
+                status_code=503, content="Clusters not ready. Please try again later."
+            )
+        # Calculate distance of each passed article to the closest cluster
+        articles_embeddings = np.array(articles_embeddings_list)
+        cluster_centers: list[list[float]] = json.loads(user.clusters)
+        distances = cdist(articles_embeddings, cluster_centers, metric="cosine")
+        closest_clusters = np.argmin(distances, axis=1)
+
+        # Assign articles to clusters based on the closest cluster
+        cluster_articles: list[list[Article]] = [
+            [] for _ in range(len(cluster_centers))
+        ]
+        for i, cluster in enumerate(closest_clusters):
+            cluster_articles[cluster].append(user.articles[i])
+
+        # Get the titles of the articles to display in the legend
+        article_titles = [article.title for article in user.articles]
+
+        # PCA for dimensionality reduction to 2D
+        pca = PCA(n_components=2)
+        articles_2d = pca.fit_transform(articles_embeddings)
+
+        # Create the plot
+        fig = px.scatter(
+            x=articles_2d[:, 0],
+            y=articles_2d[:, 1],
+            color=[f"Cluster {cluster}" for cluster in closest_clusters],
+            text=article_titles,
+            labels={"color": "Cluster"},
+            title=f"Clusters for user {user_id}",
+        )
+
+        # labels top center
+        fig.update_traces(textposition="top center")
+
+        # remove axis labels
+        fig.update_xaxes(showticklabels=False)
+        fig.update_yaxes(showticklabels=False)
+
+        return Response(
+            content=fig.to_image(format="png", width=1000, height=1000),
+            media_type="image/png",
         )

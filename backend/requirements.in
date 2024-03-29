@@ -7,9 +7,12 @@ feedgen
 feedparser
 gunicorn
 httpx
+kaleido
 loguru
 lxml
 numpy
+pandas
+plotly
 pytest
 pytest-asyncio
 pytest-cov
