@@ -104,7 +104,7 @@ def filter_articles(
         return articles
     # Calculate distance of each passed article to the closest cluster
     articles_embeddings = np.array(articles_embeddings_list)
-    distances = cdist(articles_embeddings, cluster_centers, metric="euclidean")
+    distances = cdist(articles_embeddings, cluster_centers, metric="cosine")
     min_distances = distances.min(axis=1)
 
     # Sort articles by distance to the closest cluster
