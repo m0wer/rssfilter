@@ -7,6 +7,7 @@ from sqlmodel import Session, select
 from loguru import logger
 from app.models.user import User
 from app.models.article import Article
+from app.constants import WEB_URL
 from .common import get_engine
 import json
 import numpy as np
@@ -79,14 +80,7 @@ def get_user_clusters(
 def get_user_clusters_2d(user_id: str, engine=Depends(get_engine)):
     """Return a 2D PNG image of the user's clusters.
 
-    The image includes the read articles colored by their cluster and a legend
-    with the article titles. Using plotly express to create the plot. Represent
-    cluster areas with filling colors and articles with markers. No text labels
-    for the articles, as the legend is used for that purpose.
-
-    The cluster centers are also represented in the plot.
-
-    Uses PCA for dimensionality reduction to 2D.
+    Uses PCA for dimensionality reduction to 2D. WIP.
     """
     with Session(engine, autoflush=False) as session:
         try:
@@ -133,7 +127,7 @@ def get_user_clusters_2d(user_id: str, engine=Depends(get_engine)):
             color=[f"Cluster {cluster}" for cluster in closest_clusters],
             text=article_titles,
             labels={"color": "Cluster"},
-            title=f"Clusters for user {user_id}",
+            title=f"Clusters of your read articles: {WEB_URL}",
         )
 
         # labels top center
