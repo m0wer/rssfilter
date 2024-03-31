@@ -6,8 +6,24 @@
 
 # RSS filter
 
+RSS feeds recommendation system based on user read articles. Replaces the feed
+URLs with the backend URL and uses the backend to filter out unwanted items
+and track user read articles. Uses LLM embeddings and machine learning to
+recommend similar articles.
+
 This is a simple RSS filter that filters out unwanted items from an RSS feed.
 It is written in Python and uses the `feedparser` library to parse the feed.
+
+It works by tracking the users read articles, computing their embeddings,
+clusyering them, and then recommending similar articles from the feed.
+It also includes random articles from the feed to allow for discovery of new
+topics. This starts working only after a user has read a few articles (10 by
+default).
+
+Embedding models allow for a new era of recommendation systems, where a large
+user base is not required, since recommendations are based on the content of
+the articles, not on other users behavior.:w
+
 
 ## Dependencies
 
@@ -46,3 +62,27 @@ Now you can access http://localhost on port 80, where traefik will redirect
 cd backend
 python -m uvicorn app.main:app --reload --log-level debug --port 8000
 ```
+
+## Self-hosting
+
+You can self-host this project by running the following command:
+
+```shell
+cp .env.example .env
+docker-compose -f docker-compose-cpu.yml up
+```
+
+There's also the normal `docker-compose.yaml` file, that uses NVIDIA drivers
+to run the backend with GPU support.
+
+
+Test it with:
+
+```shell
+curl -X 'GET' \
+  'http://localhost/api/v1/feed/1/https%3A%2F%2Fnews.ycombinator.com%2Frss' \
+  -H 'accept: application/json'
+```
+
+To use the self-hosted frontend, you should change `apiBaseUrl` in
+`frontend/static/app.js` to match the backend URL.
