@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RSS Filter</title>
+    <link rel="stylesheet" href="styles.css">
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+</head>
+<body>
+    <div id="app">
+    <h1>RSS Filter</h1>
+    <p>Tired of not being able to catch up with all your RSS feeds? This tool will help you filter out the noise...</p>
+    
+    <div id="feedUrlInput" class="form-element">
+        <input type="text" id="rssFeedUrl" placeholder="Enter RSS feed URL here">
+        <button onclick="validateFeedURL()">Generate Filtered Feed</button>
+    </div>
+    
+    <div id="customFeedUrl" class="form-element"></div>
+    
+    <div id="opmlUpload" class="form-element formFileMultiple-wrapper">
+        <label id="select-button" for="opmlFile">Select or drop an OPML file here</label>
+        <input type="file" id="opmlFile" accept=".opml" hidden>
+    </div>
+    
+    <!-- Submit button for OPML upload -->
+    <button id="submit-opml" class="form-element" onclick="handleOpmlUpload()">Submit OPML File</button>
+    
+    <div id="customOpmlDownload" class="form-element"></div>
+</div>
+    
+    <script src="app.js"></script>
+</body>
+</html>

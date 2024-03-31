@@ -36,13 +36,11 @@ services:
     build:
       context: frontend
       target: final
-    environment:
-      API_BASE_URL: "${API_BASE_URL:-https://rssfilter.sgn.space/api/v1/}"
     labels:
       traefik.http.routers.frontend.entrypoints: web
       traefik.http.routers.frontend.rule: PathPrefix(`/`)
       traefik.http.routers.frontend.service: frontend
-      traefik.http.services.frontend.loadbalancer.server.port: 8501
+      traefik.http.services.frontend.loadbalancer.server.port: 80
     restart: unless-stopped
 
   proxy:

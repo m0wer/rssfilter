@@ -1,0 +1,116 @@
+:root {
+    --primaryBlue: #2191fb;
+    --transparentPrimaryBlue: #2192fb3d;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    background-color: var(--transparentPrimaryBlue);
+    text-align: center;
+    height: 100vh;
+    margin: 0;
+}
+
+#app {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 65em;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+input[type="text"] {
+    width: 95%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid var(--primaryBlue);
+    border-radius: 5px;
+}
+
+button {
+    background-color: var(--primaryBlue);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: var(--transparentPrimaryBlue);
+    color: var(--primaryBlue);
+}
+
+.formFileMultiple-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.formFileMultiple-wrapper #select-button {
+    display: inline-block;
+    width: 95%;
+    padding: 10px;
+    border: 2px dashed var(--primaryBlue);
+    border-radius: 5px;
+    color: var(--primaryBlue);
+    font-weight: 600;
+    cursor: pointer;
+    background-color: #fff;
+    transition: background-color 0.2s ease-in-out;
+    margin-bottom: 20px;
+}
+
+#drop-file {
+    border: 4px dashed var(--transparentPrimaryBlue);
+    border-radius: 8px;
+    padding: 2em;
+    margin: 2em auto;
+    color: var(--primaryBlue);
+    font-size: medium;
+    font-weight: 600;
+}
+
+#uplodedFiles {
+    font-weight: 400;
+}
+
+#info:hover, a:hover {
+    transform: scale(1.1);
+    color: darkgray;
+}
+
+@media only screen and (max-width: 576px) {
+    #app, .formFileMultiple-wrapper #select-button, #drop-file {
+        width: 90%;
+        margin: 0 auto;
+    }
+}
+
+/* Spacing for form elements */
+.form-element {
+    margin-bottom: 20px; /* Increase as needed for vertical spacing */
+}
+
+/* Styles for the submit button */
+#submit-opml {
+    background-color: var(--primaryBlue);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    font-weight: bold;
+}
+
+#submit-opml:hover {
+    background-color: var(--transparentPrimaryBlue);
+    color: var(--primaryBlue);
+}

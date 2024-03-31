@@ -1,8 +1,0 @@
-streamlit
-loguru
-pdbpp
-black
-pip-tools
-feedparser
-listparser
-lxml
