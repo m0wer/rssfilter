@@ -22,7 +22,7 @@ default).
 
 Embedding models allow for a new era of recommendation systems, where a large
 user base is not required, since recommendations are based on the content of
-the articles, not on other users behavior.:w
+the articles, not on other users behavior.
 
 
 ## Self-hosting
