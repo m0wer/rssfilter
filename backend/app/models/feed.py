@@ -27,7 +27,7 @@ class Feed(SQLModel, table=True):
     url: str = Field(unique=True)
     title: str
     logo: str | None = Field(repr=False)
-    description: str = Field(repr=False)
+    description: str | None = Field(default=None, repr=False)
     language: str | None = Field(default=None, repr=False)
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc), repr=False
