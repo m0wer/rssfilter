@@ -14,6 +14,10 @@
     <div id="app">
     <h1>RSS Filter</h1>
     <p>Tired of not being able to catch up with all your RSS feeds? This tool will help you filter out the noise...</p>
+    <p>rssfilter is a recommendation system based on user read articles. By replacing the original RSS feed URLs, it starts reducing the number of unwanted items and tracking user read articles. It uses LLM embeddings and machine learning to recommend similar articles.</p>
+
+    <p>You can automatically convert all your existing feeds by uploading an OPML export from your RSS client.</p>
+
     
     <div id="feedUrlInput" class="form-element">
         <input type="text" id="rssFeedUrl" placeholder="Enter RSS feed URL here">
@@ -31,6 +35,9 @@
     <button id="submit-opml" class="form-element" onclick="handleOpmlUpload()">Submit OPML File</button>
     
     <div id="customOpmlDownload" class="form-element"></div>
+
+
+    <p>Feedback welcome! Visit <a href="https://github.com/m0wer/rssfilter" target="_blank">m0wer/rssfilter</a> or email me: m0wer (at) autistici (dot) org<p>
 </div>
     
     <script src="app.js"></script>
