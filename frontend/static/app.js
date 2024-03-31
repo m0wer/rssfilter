@@ -13,7 +13,7 @@ async function validateFeedURL() {
     const response = await fetch(`${apiBaseUrl}/v1/feed/${userId}/${encodeURIComponent(feedUrl)}`);
     if (response.status === 200) {
         const customFeedUrl = document.getElementById('customFeedUrl');
-        customFeedUrl.innerText = `Your custom RSS feed: ${response.url}`;
+        customFeedUrl.innerText = `${response.url}`;
     } else {
         alert('Failed to validate URL or generate custom feed.');
     }
