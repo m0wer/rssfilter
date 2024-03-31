@@ -21,7 +21,7 @@
     
     <div id="feedUrlInput" class="form-element">
         <input type="text" id="rssFeedUrl" placeholder="Enter RSS feed URL here">
-        <button onclick="validateFeedURL()">Generate Filtered Feed</button>
+        <button onclick="validateFeedURL()" data-umami-event="rssFeedUrl">Generate Filtered Feed</button>
     </div>
     
     <div id="customFeedUrl" class="form-element"></div>
@@ -32,7 +32,7 @@
     </div>
     
     <!-- Submit button for OPML upload -->
-    <button id="submit-opml" class="form-element" onclick="handleOpmlUpload()">Submit OPML File</button>
+    <button id="submit-opml" class="form-element" onclick="handleOpmlUpload()" data-umami-event="submit-opml">Submit OPML File</button>
     
     <div id="customOpmlDownload" class="form-element"></div>
 
