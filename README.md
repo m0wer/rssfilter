@@ -25,44 +25,6 @@ user base is not required, since recommendations are based on the content of
 the articles, not on other users behavior.:w
 
 
-## Dependencies
-
-To install the required libraries, run the following command in the backend or frontend:
-
-```shell
-pip install -r requirements.txt
-```
-
-## pre-commit
-
-There are some hooks in `.pre-commit-config.yaml` to ensure:
-- `pip-compile` is up-to-date with added dependencies
-- code is well formatted and linted with `ruff` and `black`.
-
-You can install these hooks with `pre-commit install` and run them on demand by `pre-commit run --all-files`.
-
-
-## Docker
-
-There is a `Dockerfile` inside both `frontend` and `backend` folders.
-The `backend` image is multistage, thus be careful of building dev or final as `target`.
-
-## docker-compose
-
-```shell
-docker compose up
-```
-
-Now you can access http://localhost on port 80, where traefik will redirect
-`/` to the frontend and `/api` to the backend (without stripping the prefix)
-
-## Development
-
-```shell
-cd backend
-python -m uvicorn app.main:app --reload --log-level debug --port 8000
-```
-
 ## Self-hosting
 
 You can self-host this project by running the following command:
@@ -86,3 +48,36 @@ curl -X 'GET' \
 
 To use the self-hosted frontend, you should change `apiBaseUrl` in
 `frontend/static/app.js` to match the backend URL.
+
+## Development
+
+### Backend
+
+#### Dependencies
+
+To install the required libraries, run the following command in the backend or frontend:
+
+```shell
+pip install -r requirements.txt
+```
+
+#### Running the backend
+
+```shell
+cd backend
+python -m uvicorn app.main:app --reload --log-level debug --port 8000
+```
+
+## Contributing
+
+There are some hooks in `.pre-commit-config.yaml` to ensure:
+- `pip-compile` is up-to-date with added dependencies
+- code is well formatted and linted with `ruff` and `black`.
+
+You can install these hooks with `pre-commit install` and run them on demand by `pre-commit run --all-files`.
+
+## Contact
+
+If you have any questions, feel free to contact me at
+m0wer at autistici dot org.
+```
