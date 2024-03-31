@@ -164,3 +164,4 @@ cython_debug/
 redis/
 backend/junit/
 backend/data/
+huggingface/
