@@ -1,4 +1,5 @@
 from pydantic.networks import HttpUrl
+from fastapi import Request
 import json
 from fastapi import APIRouter, Response, Depends
 from sqlmodel import Session, select
@@ -20,8 +21,14 @@ router = APIRouter(
 
 @router.get("/{user_id}/{feed_url:path}")
 # @cache(expire=300, coder=PickleCoder)
-async def get_feed(user_id: str, feed_url: HttpUrl, engine=Depends(get_engine)) -> str:
+async def get_feed(
+    request: Request, user_id: str, feed_url: HttpUrl, engine=Depends(get_engine)
+) -> str:
     """Get filtered feed."""
+    if request.query_params:
+        feed_url = f"{feed_url}?"  # type: ignore
+        for key, value in request.query_params.items():
+            feed_url = f"{feed_url}&{key}={value}"  # type: ignore
     with Session(engine, autoflush=False) as session:
         try:
             user: User = session.exec(select(User).where(User.id == user_id)).one()
