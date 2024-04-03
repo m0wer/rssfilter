@@ -181,7 +181,9 @@ async def parse_feed(feed_url: HttpUrl) -> Feed:
                 url=entry.link,
                 description=entry.description,
                 comments_url=entry.get("comments"),
-                pub_date=dateparser.parse(entry.published),
+                pub_date=dateparser.parse(entry.published)
+                if hasattr(entry, "published")
+                else datetime.now(),
             )
             for entry in parsed.entries
         ],
