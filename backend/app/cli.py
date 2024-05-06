@@ -5,7 +5,7 @@ import typer
 from sqlmodel import create_engine, select
 import os
 from sqlmodel import Session, SQLModel
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from rich.progress import track
 
 from .models.article import Article  # noqa: F401
@@ -44,7 +44,15 @@ def compute_missing_embeddings():
 @cli.command()
 def fetch_feeds():
     with Session(ENGINE, autoflush=False) as session:
-        feeds = session.query(Feed).all()
+        # only fetch feeds that have users that have been active in the last 7 days
+        feeds = (
+            session.query(Feed)
+            .join(Feed.users)
+            .filter(User.last_request > datetime.now(timezone.utc) - timedelta(days=7))
+            .distinct()
+            .all()
+        )
+        logger.info(f"Fetching {len(feeds)} feeds")
         for feed in feeds:
             logger.info(f"Fetching {feed.url}")
             start = time.time()
