@@ -1,4 +1,5 @@
 from pydantic.networks import HttpUrl
+import re
 from fastapi import Request
 import json
 from fastapi import APIRouter, Response, Depends
@@ -8,6 +9,7 @@ from app.models.feed import Feed, generate_feed, parse_feed, UpstreamError
 from app.models.user import User
 from app.recommend import filter_articles
 from .common import get_engine
+from fastapi import HTTPException
 
 # from fastapi_cache.coder import PickleCoder
 # from fastapi_cache.decorator import cache
@@ -25,6 +27,10 @@ async def get_feed(
     request: Request, user_id: str, feed_url: HttpUrl, engine=Depends(get_engine)
 ) -> str:
     """Get filtered feed."""
+    if feed_url.host and re.match(
+        r"^(25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b", feed_url.host
+    ):
+        raise HTTPException(status_code=422, detail="Invalid URL")
     if request.query_params:
         feed_url = f"{feed_url}?"  # type: ignore
         for key, value in request.query_params.items():

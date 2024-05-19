@@ -74,3 +74,13 @@ class TestFeed:
                 app.url_path_for("get_feed", feed_url="invalid", user_id=test_user_id)
             )
         assert response.status_code == 422
+
+    def test_get_feed_ip_url(self, client, root_path, test_user_id):
+        with client:
+            response = client.get(
+                app.url_path_for(
+                    "get_feed", feed_url="http://192.168.1.1", user_id=test_user_id
+                )
+            )
+        assert response.status_code == 422
+        assert response.json() == {"detail": "Invalid URL"}
