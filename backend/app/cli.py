@@ -13,6 +13,7 @@ from .models.feed import Feed, parse_feed  # noqa: F401
 from .models.user import User  # noqa: F401
 from .recommend import compute_embeddings, cluster_articles
 from loguru import logger
+from pydantic import HttpUrl
 
 models = [Article, Feed, User]
 
@@ -57,7 +58,7 @@ def fetch_feeds():
             logger.info(f"Fetching {feed.url}")
             start = time.time()
             try:
-                parsed_feed = asyncio.run(parse_feed(feed.url))
+                parsed_feed = asyncio.run(parse_feed(HttpUrl(feed.url)))
                 logger.debug(f"Found {len(parsed_feed.articles)} articles")
                 for article in parsed_feed.articles:
                     article.feed = feed
