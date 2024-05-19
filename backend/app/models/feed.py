@@ -157,10 +157,16 @@ class UpstreamError(Exception):
 
 async def parse_feed(feed_url: HttpUrl) -> Feed:
     """Register a new feed."""
+    if feed_url.host and re.match(
+        r"^(25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b", feed_url.host
+    ):
+        raise RuntimeError("Invalid URL")
     async with ClientSession() as aiohttp_session:
         try:
             async with aiohttp_session.get(
-                str(feed_url), headers={"User-agent": "Mozilla/5.0"}
+                str(feed_url),
+                headers={"User-agent": "Mozilla/5.0"},
+                allow_redirects=False,
             ) as response:
                 response.raise_for_status()
                 feed_response = await response.text()
