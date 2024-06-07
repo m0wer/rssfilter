@@ -166,7 +166,6 @@ async def parse_feed(feed_url: HttpUrl) -> Feed:
             async with aiohttp_session.get(
                 str(feed_url),
                 headers={"User-agent": "Mozilla/5.0"},
-                allow_redirects=False,
             ) as response:
                 response.raise_for_status()
                 feed_response = await response.text()
