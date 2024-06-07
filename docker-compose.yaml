@@ -26,8 +26,8 @@ services:
       resources:
         limits:
           # recommended to set 1 CPU and 1G of memory per worker
-          cpus: ${BACKEND_CPUS:-2}
-          memory: ${BACKEND_MEMORY:-2G}
+          cpus: ${BACKEND_CPUS:-${MAX_WORKERS:-2}}
+          memory: ${BACKEND_MEMORY:-${MAX_WORKERS:-2}}G
         reservations:
           devices:
             - driver: nvidia
