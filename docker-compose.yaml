@@ -9,7 +9,7 @@ services:
       API_BASE_URL: "https://rssfilter.sgn.space/"
       ROOT_PATH: "/api/"
       REDIS_URL: "redis://redis:6379"
-      MAX_WORKERS: ${MAX_WORKERS}
+      MAX_WORKERS: ${MAX_WORKERS:-2}
       LOGURU_LEVEL: ${LOGURU_LEVEL:-INFO}
     labels:
       traefik.http.routers.backend.entrypoints: web
@@ -24,6 +24,10 @@ services:
     restart: unless-stopped
     deploy:
       resources:
+        limits:
+          # recommended to set 1 CPU and 1G of memory per worker
+          cpus: ${BACKEND_CPUS:-2}
+          memory: ${BACKEND_MEMORY:-2G}
         reservations:
           devices:
             - driver: nvidia
@@ -41,6 +45,11 @@ services:
       traefik.http.routers.frontend.service: frontend
       traefik.http.services.frontend.loadbalancer.server.port: 80
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: ${FRONTEND_CPUS:-2}
+          memory: ${FRONTEND_MEMORY:-50M}
 
   proxy:
     image: traefik:v2.3
@@ -56,6 +65,11 @@ services:
       - backend
       - frontend
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: ${PROXY_CPUS:-2}
+          memory: ${PROXY_MEMORY:-100M}
 
   redis:
     image: redis:7-alpine
@@ -63,3 +77,8 @@ services:
     volumes:
       - ${REDIS_PATH:-./redis/}:/data
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: ${REDIS_CPUS:-2}
+          memory: ${REDIS_MEMORY:-100M}
