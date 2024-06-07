@@ -25,9 +25,9 @@ services:
     deploy:
       resources:
         limits:
-          # recommended to set 1 CPU and 1G of memory per worker
-          cpus: ${BACKEND_CPUS:-${MAX_WORKERS:-2}}
-          memory: ${BACKEND_MEMORY:-${MAX_WORKERS:-2}}G
+          # recommended to set 1 CPU and 1G of memory per worker, and one additional CPU and 1G of memory for the cron job
+          cpus: "${BACKEND_CPUS:-3}"
+          memory: "${BACKEND_MEMORY:-3}G"
         reservations:
           devices:
             - driver: nvidia
