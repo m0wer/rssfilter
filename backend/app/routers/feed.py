@@ -1,3 +1,4 @@
+import asyncio
 from pydantic.networks import HttpUrl
 from datetime import datetime, timedelta, timezone
 import re
@@ -9,7 +10,7 @@ from loguru import logger
 from app.models.feed import Feed, generate_feed, parse_feed, UpstreamError
 from app.models.user import User
 from app.recommend import filter_articles
-from app.tasks import fetch_feed_batch
+from app.tasks import fetch_feed_batch, enqueue_high_priority
 from .common import get_engine
 from fastapi import HTTPException
 from fastapi import BackgroundTasks
@@ -86,7 +87,15 @@ async def get_feed(
             > FEED_REFRESH_INTERVAL
         ):
             logger.info(f"Feed {feed_url} needs refreshing")
-            fetch_feed_batch([feed.id])
+            job = enqueue_high_priority(fetch_feed_batch, [feed.id])
+            start = datetime.now()
+            while job.get_status(refresh=True) != "finished":
+                await asyncio.sleep(0.5)
+                if (datetime.now() - start) > timedelta(seconds=10):
+                    logger.warning(
+                        f"Feed {feed_url} refresh job took too long, returning old data"
+                    )
+                    break
             session.refresh(feed)
 
         articles = feed.articles[-30:]
