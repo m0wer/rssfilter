@@ -1,7 +1,7 @@
 import typer
 from sqlmodel import create_engine, SQLModel
 import os
-from app.tasks import enqueue_low_priority, fetch_all_feeds, remove_old_embeddings
+from app.tasks import fetch_all_feeds, remove_old_embeddings
 from app.models.article import Article
 from app.models.feed import Feed
 from app.models.user import User
@@ -20,15 +20,13 @@ cli = typer.Typer()
 @cli.command()
 def fetch_feeds():
     """Enqueue task to fetch all feeds."""
-    enqueue_low_priority(fetch_all_feeds)
-    typer.echo("Enqueued task to fetch all feeds")
+    fetch_all_feeds()
 
 
 @cli.command()
 def clean_embeddings():
     """Enqueue task to remove old embeddings."""
-    enqueue_low_priority(remove_old_embeddings)
-    typer.echo("Enqueued task to remove old embeddings")
+    remove_old_embeddings()
 
 
 if __name__ == "__main__":
