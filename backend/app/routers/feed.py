@@ -1,4 +1,6 @@
+import asyncio
 from pydantic.networks import HttpUrl
+from datetime import datetime, timedelta, timezone
 import re
 from fastapi import Request
 import json
@@ -8,8 +10,10 @@ from loguru import logger
 from app.models.feed import Feed, generate_feed, parse_feed, UpstreamError
 from app.models.user import User
 from app.recommend import filter_articles
+from app.tasks import fetch_feed_batch
 from .common import get_engine
 from fastapi import HTTPException
+from fastapi import BackgroundTasks
 
 # from fastapi_cache.coder import PickleCoder
 # from fastapi_cache.decorator import cache
@@ -21,35 +25,33 @@ router = APIRouter(
 )
 
 
+FEED_REFRESH_INTERVAL = timedelta(days=1)  # Adjust as needed
+
+
 @router.get("/{user_id}/{feed_url:path}")
-# @cache(expire=300, coder=PickleCoder)
 async def get_feed(
-    request: Request, user_id: str, feed_url: HttpUrl, engine=Depends(get_engine)
+    request: Request,
+    user_id: str,
+    feed_url: HttpUrl,
+    background_tasks: BackgroundTasks,
+    engine=Depends(get_engine),
 ) -> str:
-    """Get filtered feed."""
     if feed_url.host and re.match(
         r"^(25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b", feed_url.host
     ):
         raise HTTPException(status_code=422, detail="Invalid URL")
-    if request.query_params:
-        feed_url = f"{feed_url}?"  # type: ignore
-        for key, value in request.query_params.items():
-            feed_url = f"{feed_url}&{key}={value}"  # type: ignore
+
     with Session(engine, autoflush=False) as session:
+        # User handling (same as before)
         try:
             user: User = session.exec(select(User).where(User.id == user_id)).one()
         except NoResultFound:
             logger.info(f"User {user_id} not found in database, creating new user")
             user = User(id=user_id)
             session.add(user)
-            try:
-                session.commit()
-            except Exception as e:
-                # might happen if the user was created before by another thread
-                logger.warning(f"Failed to add user {user_id} to database: {e}")
-                session.rollback()
-                user = session.exec(select(User).where(User.id == user_id)).one()
+            session.commit()
 
+        # Feed handling
         try:
             feed: Feed = session.exec(
                 select(Feed).where(Feed.url == str(feed_url))
@@ -70,9 +72,23 @@ async def get_feed(
                 logger.warning(f"Failed to add feed {feed_url} to database: {e}")
                 session.rollback()
                 feed = session.exec(select(Feed).where(Feed.url == str(feed_url))).one()
+            session.add(feed)
+            session.commit()
+
         if feed not in user.feeds:
             user.feeds.append(feed)
-        session.commit()
+            session.commit()
+
+        # Check if feed needs refreshing
+        now = datetime.now(timezone.utc)
+        if (
+            feed.updated_at is None
+            or (now - feed.updated_at.replace(tzinfo=timezone.utc))
+            > FEED_REFRESH_INTERVAL
+        ):
+            logger.info(f"Feed {feed_url} needs refreshing")
+            await asyncio.run(fetch_feed_batch([feed.id]))
+            session.refresh(feed)
 
         articles = feed.articles[-30:]
 
