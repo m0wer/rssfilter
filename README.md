@@ -34,6 +34,12 @@ cp .env.example .env
 docker-compose -f docker-compose.yml up
 ```
 
+If you don't have or want to use the GPU, first run:
+
+```shell
+sed -i 's/^.*devices:.*$/#&/' docker-compose.yaml
+```
+
 Test it with:
 
 ```shell
