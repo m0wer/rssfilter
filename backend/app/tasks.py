@@ -1,7 +1,7 @@
 import asyncio
 import os
 import json
-from sqlmodel import create_engine, Session, select
+from sqlmodel import create_engine, Session, select, update
 from datetime import datetime, timezone, timedelta
 from loguru import logger
 from redis import Redis  # type: ignore
@@ -58,17 +58,20 @@ def recompute_user_clusters(user_id):
 def remove_old_embeddings():
     with Session(ENGINE) as session:
         one_month_ago = datetime.now(timezone.utc) - timedelta(days=30)
-        old_articles = session.exec(
-            select(Article)
+
+        # Perform the update directly in the database
+        update_statement = (
+            update(Article)
             .where(Article.updated < one_month_ago)
             .where(Article.embedding != None)  # noqa: E711
-        ).all()
+            .values(embedding=None)
+        )
 
-        for article in old_articles:
-            article.embedding = None
+        result = session.exec(update_statement)
+        affected_rows = result.rowcount
 
         session.commit()
-        logger.info(f"Removed embeddings from {len(old_articles)} old articles")
+        logger.info(f"Removed embeddings from {affected_rows} old articles")
 
 
 BATCH_SIZE = int(os.getenv("FEED_FETCH_BATCH_SIZE", "10"))
