@@ -1,4 +1,3 @@
-import asyncio
 from pydantic.networks import HttpUrl
 from datetime import datetime, timedelta, timezone
 import re
@@ -87,7 +86,7 @@ async def get_feed(
             > FEED_REFRESH_INTERVAL
         ):
             logger.info(f"Feed {feed_url} needs refreshing")
-            await asyncio.run(fetch_feed_batch([feed.id]))
+            fetch_feed_batch([feed.id])
             session.refresh(feed)
 
         articles = feed.articles[-30:]
