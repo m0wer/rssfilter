@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from sys import argv
-from redis import Redis
+from redis import Redis  # type: ignore
 from rq import Worker
 
 # Preload libraries
