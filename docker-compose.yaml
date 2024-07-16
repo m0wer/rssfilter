@@ -13,6 +13,7 @@ services:
       MAX_WORKERS: ${MAX_WORKERS:-2}
       LOGURU_LEVEL: ${LOGURU_LEVEL:-INFO}
       CUDA_VISIBLE_DEVICES: ${CUDA_VISIBLE_DEVICES:-all}
+      FEED_FETCH_BATCH_SIZE: ${FEED_FETCH_BATCH_SIZE:-10}
     labels:
       traefik.http.routers.backend.entrypoints: web
       traefik.http.routers.backend.rule: PathPrefix(`/api`)
