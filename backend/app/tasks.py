@@ -71,21 +71,23 @@ def remove_old_embeddings():
         logger.info(f"Removed embeddings from {len(old_articles)} old articles")
 
 
-BATCH_SIZE = int(os.getenv("FEED_FETCH_BATCH_SIZE", "50"))
+BATCH_SIZE = int(os.getenv("FEED_FETCH_BATCH_SIZE", "10"))
 
 
-async def fetch_feed_batch(feed_ids):
+def fetch_feed_batch(feed_ids):
     async def fetch_single_feed(feed):
         try:
             return await parse_feed(feed.url)
         except Exception as e:
-            logger.error(f"Error fetching feed {feed.id}: {e}")
+            logger.warning(f"Error fetching feed {feed.id}: {e}")
             return None
+
+    async def fetch_multiple_feeds(feeds):
+        return await asyncio.gather(*[fetch_single_feed(feed) for feed in feeds])
 
     with Session(ENGINE) as session:
         feeds = session.exec(select(Feed).where(Feed.id.in_(feed_ids))).all()
-        tasks = [asyncio.create_task(fetch_single_feed(feed)) for feed in feeds]
-        results = await asyncio.gather(*tasks)
+        results = asyncio.run(fetch_multiple_feeds(feeds))
 
         new_articles = []
         for feed, parsed_feed in zip(feeds, results):
@@ -146,7 +148,7 @@ def fetch_all_feeds():
 
         for i in range(0, len(active_feeds), BATCH_SIZE):
             batch = active_feeds[i : i + BATCH_SIZE]
-            asyncio.run(fetch_feed_batch([feed.id for feed in batch]))
+            enqueue_low_priority(fetch_feed_batch, [feed.id for feed in batch])
 
     logger.info(
         f"Processed {len(active_feeds)} active feeds in batches of {BATCH_SIZE}"
