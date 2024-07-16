@@ -1,19 +1,18 @@
+import asyncio
 from pydantic.networks import HttpUrl
 import re
-from fastapi import Request
-import json
-from fastapi import APIRouter, Response, Depends
+import time
+from fastapi import APIRouter, Response, Depends, HTTPException
 from sqlmodel import Session, select
-from loguru import logger
-from app.models.feed import Feed, generate_feed, parse_feed, UpstreamError
+from app.models.feed import Feed
 from app.models.user import User
-from app.recommend import filter_articles
+from app.tasks import (
+    enqueue_high_priority,
+    generate_filtered_feed,
+    fetch_feed,
+    enqueue_medium_priority,
+)
 from .common import get_engine
-from fastapi import HTTPException
-
-# from fastapi_cache.coder import PickleCoder
-# from fastapi_cache.decorator import cache
-from sqlalchemy.orm.exc import NoResultFound
 
 router = APIRouter(
     tags=["feed"],
@@ -22,73 +21,50 @@ router = APIRouter(
 
 
 @router.get("/{user_id}/{feed_url:path}")
-# @cache(expire=300, coder=PickleCoder)
 async def get_feed(
-    request: Request, user_id: str, feed_url: HttpUrl, engine=Depends(get_engine)
-) -> str:
+    user_id: str, feed_url: HttpUrl, engine=Depends(get_engine)
+) -> Response:
     """Get filtered feed."""
     if feed_url.host and re.match(
         r"^(25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b", feed_url.host
     ):
         raise HTTPException(status_code=422, detail="Invalid URL")
-    if request.query_params:
-        feed_url = f"{feed_url}?"  # type: ignore
-        for key, value in request.query_params.items():
-            feed_url = f"{feed_url}&{key}={value}"  # type: ignore
+
     with Session(engine, autoflush=False) as session:
-        try:
-            user: User = session.exec(select(User).where(User.id == user_id)).one()
-        except NoResultFound:
-            logger.info(f"User {user_id} not found in database, creating new user")
+        feed = session.exec(select(Feed).where(Feed.url == str(feed_url))).first()
+        if not feed:
+            # If feed does not exist, create it and fetch the articles
+            feed = Feed(url=str(feed_url))
+            session.add(feed)
+            session.commit()
+            job = enqueue_medium_priority(fetch_feed, feed.id)
+            while not job.result:
+                await asyncio.sleep(0.5)
+
+        user = session.exec(select(User).where(User.id == user_id)).first()
+        if not user:
             user = User(id=user_id)
             session.add(user)
-            try:
-                session.commit()
-            except Exception as e:
-                # might happen if the user was created before by another thread
-                logger.warning(f"Failed to add user {user_id} to database: {e}")
-                session.rollback()
-                user = session.exec(select(User).where(User.id == user_id)).one()
+            session.commit()
 
-        try:
-            feed: Feed = session.exec(
-                select(Feed).where(Feed.url == str(feed_url))
-            ).one()
-        except NoResultFound:
-            logger.info(
-                f"Feed {feed_url} not found in database, fetching from upstream"
-            )
-            try:
-                feed = await parse_feed(feed_url)
-            except UpstreamError as e:
-                return Response(content=str(e), status_code=502)
-            session.add(feed)
-            try:
-                session.commit()
-            except Exception as e:
-                # might happen if the feed was created before by another thread
-                logger.warning(f"Failed to add feed {feed_url} to database: {e}")
-                session.rollback()
-                feed = session.exec(select(Feed).where(Feed.url == str(feed_url))).one()
         if feed not in user.feeds:
             user.feeds.append(feed)
-        session.commit()
+            session.commit()
 
-        articles = feed.articles[-30:]
+    # Enqueue the task to generate the filtered feed
+    job = enqueue_high_priority(generate_filtered_feed, feed.id, user_id)
 
-        if user.clusters:
-            filtered_articles = filter_articles(
-                articles=articles, cluster_centers=json.loads(user.clusters)
-            )
-            logger.debug(
-                f"Returning {len(filtered_articles)}/{len(articles)} articles for user {user_id}"
-            )
-        else:
-            logger.debug(
-                f"No cluster centers found for user {user_id}, returning all articles"
-            )
-            filtered_articles = articles
+    # Wait for the job to complete (with a timeout)
+    timeout = 30  # 30 seconds timeout
+    result = job.result
+    start_time = time.time()
+    while result is None:
+        if time.time() - start_time > timeout:
+            raise HTTPException(status_code=504, detail="Feed generation timed out")
+        await asyncio.sleep(0.05)
+        result = job.result
 
-        custom_feed = generate_feed(feed, filtered_articles, user_id)
+    if result is None:
+        raise HTTPException(status_code=504, detail="Feed generation failed")
 
-    return Response(content=custom_feed, media_type="application/xml")
+    return Response(content=result, media_type="application/xml")

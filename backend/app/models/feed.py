@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 from aiohttp.client_exceptions import ClientError
 from pydantic.networks import HttpUrl
+from pydantic import validate_call
 import xml.etree.ElementTree as ET
 from feedgen.feed import FeedGenerator
 from collections.abc import Iterator
@@ -155,6 +156,7 @@ class UpstreamError(Exception):
     pass
 
 
+@validate_call
 async def parse_feed(feed_url: HttpUrl) -> Feed:
     """Register a new feed."""
     if feed_url.host and re.match(

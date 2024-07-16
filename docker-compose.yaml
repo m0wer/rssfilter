@@ -8,7 +8,8 @@ services:
     environment:
       API_BASE_URL: "https://rssfilter.sgn.space/"
       ROOT_PATH: "/api/"
-      REDIS_URL: "redis://redis:6379"
+      REDIS_URL: "redis://redis:6379/0"
+      DATABASE_URL: "sqlite:///data/db.sqlite"
       MAX_WORKERS: ${MAX_WORKERS:-2}
       LOGURU_LEVEL: ${LOGURU_LEVEL:-INFO}
       CUDA_VISIBLE_DEVICES: ${CUDA_VISIBLE_DEVICES:-all}
@@ -22,18 +23,57 @@ services:
       - ${HUGGINGFACE_CACHE:-./huggingface/}:/root/.cache/huggingface/
     depends_on:
       - redis
+      - rq-worker
     restart: unless-stopped
     deploy:
       resources:
         limits:
-          # recommended to set 1 CPU and 2G of memory per worker
           cpus: "${BACKEND_CPUS:-4}"
-          memory: "${BACKEND_MEMORY:-8}G"
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
+          memory: "${BACKEND_MEMORY:-8G}"
+        reservations: {devices: [{driver: nvidia, count: all, capabilities: [gpu]}]}
+
+  rq-worker:
+    image: ghcr.io/m0wer/rssfilter-backend:master
+    container_name: rssfilter-rq-worker
+    command: ["/app/worker.py", "high", "medium", "low"]
+    environment:
+      REDIS_URL: "redis://redis:6379/0"
+      DATABASE_URL: "sqlite:///data/db.sqlite"
+      LOGURU_LEVEL: ${LOGURU_LEVEL:-INFO}
+      CUDA_VISIBLE_DEVICES: ${CUDA_VISIBLE_DEVICES:-all}
+    volumes:
+      - ${SQLITE_PATH:-./data/}:/app/data/
+      - ${HUGGINGFACE_CACHE:-./huggingface/}:/root/.cache/huggingface/
+    depends_on:
+      - redis
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "${RQ_WORKER_CPUS:-2}"
+          memory: "${RQ_WORKER_MEMORY:-4G}"
+        reservations: {devices: [{driver: nvidia, count: all, capabilities: [gpu]}]}
+
+  rq-worker-high:
+    image: ghcr.io/m0wer/rssfilter-backend:master
+    container_name: rssfilter-rq-worker-high
+    command: ["/app/worker.py", "high"]
+    environment:
+      REDIS_URL: "redis://redis:6379/0"
+      DATABASE_URL: "sqlite:///data/db.sqlite"
+      LOGURU_LEVEL: ${LOGURU_LEVEL:-INFO}
+      CUDA_VISIBLE_DEVICES: ${CUDA_VISIBLE_DEVICES:-all}
+    volumes:
+      - ${SQLITE_PATH:-./data/}:/app/data/
+      - ${HUGGINGFACE_CACHE:-./huggingface/}:/root/.cache/huggingface/
+    depends_on:
+      - redis
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "${RQ_WORKER_CPUS:-2}"
+          memory: "${RQ_WORKER_MEMORY:-4G}"
 
   frontend:
     image: ghcr.io/m0wer/rssfilter-frontend:master
@@ -54,7 +94,7 @@ services:
 
   proxy:
     image: traefik:v2.3
-    hostname: traefik
+    container_name: rssfilter-proxy
     command:
      - --providers.docker
      - --entryPoints.web.address=:80

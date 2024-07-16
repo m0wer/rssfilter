@@ -31,12 +31,8 @@ You can self-host this project by running the following command:
 
 ```shell
 cp .env.example .env
-docker-compose -f docker-compose-cpu.yml up
+docker-compose -f docker-compose.yml up
 ```
-
-There's also the normal `docker-compose.yaml` file, that uses NVIDIA drivers
-to run the backend with GPU support.
-
 
 Test it with:
 
