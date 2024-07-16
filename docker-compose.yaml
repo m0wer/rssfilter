@@ -75,6 +75,27 @@ services:
           memory: "${RQ_WORKER_MEMORY:-4G}"
         reservations: {devices: [{driver: nvidia, count: all, capabilities: [gpu]}]}
 
+  rq-dashboard:
+    build: https://github.com/Parallels/rq-dashboard.git
+    container_name: rssfilter-rq-dashboard
+    command: ["--redis-url", "redis://redis:6379/0", "--url-prefix", "/rq", "--verbose", "--username", "admin", "--password", "${RQ_DASHBOARD_PASSWORD:-admin}"]
+    labels:
+      traefik.http.routers.rq-dashboard.entrypoints: web
+      traefik.http.routers.rq-dashboard.rule: PathPrefix(`/rq`)
+      traefik.http.routers.rq-dashboard.service: rq-dashboard
+      traefik.http.services.rq-dashboard.loadbalancer.server.port: 9181
+    ports:
+      - ${RQ_DASHBOARD_PORT:-9181}:9181
+    depends_on:
+      - redis
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: ${RQ_DASHBOARD_CPUS:-1}
+          memory: ${RQ_DASHBOARD_MEMORY:-50M}
+    
+
   frontend:
     image: ghcr.io/m0wer/rssfilter-frontend:master
     container_name: rssfilter-frontend
