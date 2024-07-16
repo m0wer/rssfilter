@@ -1,3 +1,5 @@
+import pytest
+from os import getenv
 import json
 from typer.testing import CliRunner
 from sqlmodel import Session, create_engine, select
@@ -5,7 +7,6 @@ from app.models.article import Article
 from app.models.feed import Feed
 from app.models.user import User
 from app.recommend import compute_embeddings
-import pytest
 from unittest import mock
 from app.cli import cli
 from app.cli import SQLModel
@@ -41,6 +42,9 @@ def engine(tmpdir):
 
 
 class TestClusters:
+    @pytest.mark.skipif(
+        getenv("REDIS_URL") is None, reason="REDIS_URL environment variable not set"
+    )
     def test_clusters(self, engine):
         with Session(engine) as session:
             feed = Feed(

@@ -22,6 +22,7 @@ redis_conn = Redis.from_url(os.getenv("REDIS_URL", "redis://localhost:6379"))
 low_queue = Queue("low", connection=redis_conn)
 medium_queue = Queue("medium", connection=redis_conn)
 high_queue = Queue("high", connection=redis_conn)
+gpu_queue = Queue("gpu", connection=redis_conn)
 
 
 def fetch_feed(feed_id):
@@ -41,7 +42,7 @@ def fetch_feed(feed_id):
                     article.feed = feed
                     session.add(article)
                     session.commit()
-                    low_queue.enqueue(compute_article_embedding, article.id)
+                    gpu_queue.enqueue(compute_article_embedding, article.id)
 
             logger.info(
                 f"Fetched {len(parsed_feed.articles)} articles for feed {feed_id}"

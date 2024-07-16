@@ -1,13 +1,18 @@
+import pytest
+from os import getenv
 from urllib.parse import quote
-from app.main import app
-
-from app.models.user import User
-from app.models.article import Article
 
 from sqlmodel import Session, select
 
+from app.main import app
+from app.models.user import User
+from app.models.article import Article
+
 
 class TestLog:
+    @pytest.mark.skipif(
+        getenv("REDIS_URL") is None, reason="REDIS_URL environment variable not set"
+    )
     def test_log_post(self, client, root_path, engine, test_user_id):
         link_url = "https://www.example.com"
         article_id = 1
