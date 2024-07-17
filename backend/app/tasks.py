@@ -19,10 +19,10 @@ ENGINE = create_engine(
 )
 
 redis_conn = Redis.from_url(os.getenv("REDIS_URL", "redis://localhost:6379"))
-low_queue = Queue("low", connection=redis_conn)
-medium_queue = Queue("medium", connection=redis_conn)
-high_queue = Queue("high", connection=redis_conn)
-gpu_queue = Queue("gpu", connection=redis_conn)
+low_queue = Queue("low", connection=redis_conn, default_timeout=60)
+medium_queue = Queue("medium", connection=redis_conn, default_timeout=60)
+high_queue = Queue("high", connection=redis_conn, default_timeout=20)
+gpu_queue = Queue("gpu", connection=redis_conn, default_timeout=300)
 
 
 def compute_article_embedding(article_id):
@@ -204,24 +204,16 @@ def generate_filtered_feed(feed_id: int, user_id: str):
 
 # Helper functions to enqueue tasks
 def enqueue_low_priority(func, *args, **kwargs):
-    return low_queue.enqueue(
-        func, args=args, kwargs=kwargs, retry=Retry(max=3), timeout=300
-    )
+    return low_queue.enqueue(func, args=args, kwargs=kwargs, retry=Retry(max=3))
 
 
 def enqueue_medium_priority(func, *args, **kwargs):
-    return medium_queue.enqueue(
-        func, args=args, kwargs=kwargs, retry=Retry(max=3), timeout=300
-    )
+    return medium_queue.enqueue(func, args=args, kwargs=kwargs, retry=Retry(max=3))
 
 
 def enqueue_high_priority(func, *args, **kwargs):
-    return high_queue.enqueue(
-        func, args=args, kwargs=kwargs, retry=Retry(max=2), timeout=10
-    )
+    return high_queue.enqueue(func, args=args, kwargs=kwargs, retry=Retry(max=2))
 
 
 def enqueue_gpu_task(func, *args, **kwargs):
-    return gpu_queue.enqueue(
-        func, args=args, kwargs=kwargs, retry=Retry(max=3), timeout=600
-    )
+    return gpu_queue.enqueue(func, args=args, kwargs=kwargs, retry=Retry(max=3))
