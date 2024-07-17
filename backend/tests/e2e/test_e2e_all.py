@@ -3,7 +3,7 @@ import re
 import asyncio
 from os import getenv
 
-from aiohttp import ClientSession
+from aiohttp import ClientSession, ClientTimeout
 
 API_URL: str
 
@@ -47,7 +47,7 @@ class TestGetFeeds:
     @pytest.mark.asyncio
     async def test_get_feeds_new_user(self):
         """Test the main use case with a new user."""
-        async with ClientSession(timeout=30) as session:
+        async with ClientSession(timeout=ClientTimeout(total=10)) as session:
             # get all feeds at once
             results = await asyncio.gather(
                 *[

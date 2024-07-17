@@ -6,7 +6,7 @@ import xml.etree.ElementTree as ET
 from feedgen.feed import FeedGenerator
 from collections.abc import Iterator
 import feedparser
-from aiohttp import ClientSession
+from aiohttp import ClientSession, ClientTimeout
 
 import re
 import dateparser
@@ -163,7 +163,7 @@ async def parse_feed(feed_url: HttpUrl) -> Feed:
         r"^(25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b", feed_url.host
     ):
         raise RuntimeError("Invalid URL")
-    async with ClientSession(timeout=10) as aiohttp_session:
+    async with ClientSession(timeout=ClientTimeout(total=20)) as aiohttp_session:
         try:
             async with aiohttp_session.get(
                 str(feed_url),
