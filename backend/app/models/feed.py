@@ -163,7 +163,7 @@ async def parse_feed(feed_url: HttpUrl) -> Feed:
         r"^(25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b", feed_url.host
     ):
         raise RuntimeError("Invalid URL")
-    async with ClientSession() as aiohttp_session:
+    async with ClientSession(timeout=10) as aiohttp_session:
         try:
             async with aiohttp_session.get(
                 str(feed_url),
