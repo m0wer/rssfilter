@@ -94,6 +94,8 @@ def fetch_feed_batch(feed_ids):
 
         new_articles = []
         for feed, parsed_feed in zip(feeds, results):
+            feed.updated_at = datetime.now(timezone.utc)
+
             if parsed_feed is None:
                 continue
 
@@ -105,8 +107,6 @@ def fetch_feed_batch(feed_ids):
                     article.feed = feed
                     session.add(article)
                     new_articles.append(article)
-
-            feed.updated_at = datetime.now(timezone.utc)
 
         session.commit()
 
