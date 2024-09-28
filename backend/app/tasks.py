@@ -101,7 +101,9 @@ def fetch_feed_batch(feed_ids):
 
             for article in parsed_feed.articles:
                 existing_article = session.exec(
-                    select(Article).where(Article.url == article.url)
+                    select(Article)
+                    .where(Article.feed_id == feed.id)
+                    .where(Article.url == article.url)
                 ).first()
                 if not existing_article:
                     article.feed = feed
