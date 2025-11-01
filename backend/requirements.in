@@ -11,7 +11,7 @@ httpx
 kaleido
 loguru
 lxml
-numpy
+numpy<2.0
 pandas
 plotly
 pytest
