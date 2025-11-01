@@ -1,10 +1,11 @@
 import pytest
+import pytest_asyncio
 from aiohttp import web
 from aiohttp.test_utils import TestServer
 from app.models.feed import parse_feed, SSRFException
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def redirect_server():
     async def redirect_to_localhost(request):
         return web.Response(status=302, headers={"Location": "http://127.0.0.1:6379/"})

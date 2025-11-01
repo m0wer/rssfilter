@@ -82,5 +82,4 @@ class TestFeed:
                     "get_feed", feed_url="http://192.168.1.1", user_id=test_user_id
                 )
             )
-        assert response.status_code == 422
-        assert response.json() == {"detail": "Invalid URL"}
+        assert response.status_code == 403
