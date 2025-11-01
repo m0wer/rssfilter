@@ -38,3 +38,21 @@ class TestLog:
             assert article.updated is not None
 
             assert article in user.articles
+
+    @pytest.mark.skipif(
+        getenv("REDIS_URL") is None, reason="REDIS_URL environment variable not set"
+    )
+    def test_log_post_redirect_with_protocol_in_url(
+        self, client, test_user_id, engine, root_path
+    ):
+        link_url = "https://news.ycombinator.com/item?id=45767178"
+        article_id = 1
+        response = client.get(
+            f"/v1/log/{test_user_id}/{article_id}/{quote(link_url, safe='')}",
+            follow_redirects=False,
+        )
+        assert response.status_code == 307
+        location = response.headers.get("location")
+        assert location == link_url
+        assert location.startswith("https://")
+        assert "https://" not in location[8:]

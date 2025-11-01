@@ -1,5 +1,3 @@
-from urllib.parse import unquote
-
 from fastapi import APIRouter, Depends
 from fastapi.requests import Request
 from fastapi.responses import RedirectResponse
@@ -23,8 +21,6 @@ async def log_post(
     engine=Depends(get_engine),
 ):
     """Log post, and redirect to the final post url"""
-    link_url = unquote(link_url)
-
     if request.query_params:
         link_url = f"{link_url}?"
         for key, value in request.query_params.items():
