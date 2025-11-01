@@ -143,16 +143,16 @@ def generate_feed(feed: Feed, articles: list[Article], user_id: str) -> str:
         fe = fg.add_entry()
         fe.id(article.url)
         fe.title(article.title)
-        fe.link(href=f"{LOG_URL_PREFIX}/{quote(article.url)}")
+        fe.link(href=f"{LOG_URL_PREFIX}/{quote(article.url, safe='')}")
         fe.description(
             re.sub(
                 r'href="(.*?)"',
-                lambda a: f'href="{LOG_URL_PREFIX}/{quote(a.group(1))}"',
+                lambda a: f'href="{LOG_URL_PREFIX}/{quote(a.group(1), safe="")}"',
                 article.description,
             )
         )
         if article.comments_url:
-            fe.comments(f"{LOG_URL_PREFIX}/{quote(article.comments_url)}")
+            fe.comments(f"{LOG_URL_PREFIX}/{quote(article.comments_url, safe='')}")
         if article.pub_date:
             fe.pubDate(article.pub_date.replace(tzinfo=timezone.utc))
 

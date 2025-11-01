@@ -41,7 +41,7 @@ async def add_process_time_header(request: Request, call_next):
     process_time = time.time() - start_time
     response.headers["X-Process-Time"] = str(process_time)
     logger.info(
-        f"Processed request in {round(process_time*1000)} ms. {request.method} {request.url}"
+        f"Processed request in {round(process_time * 1000)} ms. {request.method} {request.url}"
     )
     return response
 
