@@ -1,4 +1,4 @@
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, SQLModel, Relationship
 from datetime import datetime, timezone
 
 
@@ -18,3 +18,6 @@ class UserFeedLink(SQLModel, table=True):
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc), primary_key=True
     )
+
+    user: "User" = Relationship(back_populates="feed_links")  # type: ignore  # noqa: F821
+    feed: "Feed" = Relationship(back_populates="feed_links")  # type: ignore  # noqa: F821

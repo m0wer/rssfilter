@@ -1,13 +1,18 @@
 import asyncio
 from pydantic.networks import HttpUrl
 from datetime import datetime, timedelta, timezone
-import re
 from fastapi import Request
 import json
 from fastapi import APIRouter, Response, Depends
 from sqlmodel import Session, select
 from loguru import logger
-from app.models.feed import Feed, generate_feed, parse_feed, UpstreamError
+from app.models.feed import (
+    Feed,
+    generate_feed,
+    parse_feed,
+    UpstreamError,
+    SSRFException,
+)
 from app.models.user import User
 from app.recommend import filter_articles
 from app.tasks import fetch_feed_batch, enqueue_high_priority
@@ -36,11 +41,6 @@ async def get_feed(
     background_tasks: BackgroundTasks,
     engine=Depends(get_engine),
 ) -> str:
-    if feed_url.host and re.match(
-        r"^(25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b", feed_url.host
-    ):
-        raise HTTPException(status_code=422, detail="Invalid URL")
-
     with Session(engine, autoflush=False) as session:
         # User handling (same as before)
         try:
@@ -64,6 +64,12 @@ async def get_feed(
                 feed = await parse_feed(feed_url)
             except UpstreamError as e:
                 return Response(content=str(e), status_code=502)
+            except SSRFException:
+                # Don't expose the internal SSRF error details
+                raise HTTPException(
+                    status_code=403,
+                    detail="Access to internal network resources is not allowed",
+                )
             session.add(feed)
             try:
                 session.commit()

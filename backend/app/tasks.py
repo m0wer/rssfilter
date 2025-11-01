@@ -8,7 +8,13 @@ from redis import Redis  # type: ignore
 from rq import Queue, Retry
 
 from app.models.article import Article
-from app.models.feed import Feed, parse_feed, generate_feed
+from app.models.feed import (
+    Feed,
+    parse_feed,
+    generate_feed,
+    SSRFException,
+    UpstreamError,
+)
 from app.models.user import User
 from app.recommend import compute_embeddings, cluster_articles, filter_articles
 
@@ -81,8 +87,11 @@ def fetch_feed_batch(feed_ids):
     async def fetch_single_feed(feed):
         try:
             return await parse_feed(feed.url)
-        except Exception as e:
+        except (SSRFException, UpstreamError) as e:
             logger.warning(f"Error fetching feed {feed.id}: {e}")
+            return None
+        except Exception as e:
+            logger.error(f"Unhandled error fetching feed {feed.id}: {e}")
             return None
 
     async def fetch_multiple_feeds(feeds):

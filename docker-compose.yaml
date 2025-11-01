@@ -31,7 +31,7 @@ services:
         limits:
           cpus: "${BACKEND_CPUS:-4}"
           memory: "${BACKEND_MEMORY:-8G}"
-        reservations: {devices: [{driver: nvidia, count: all, capabilities: [gpu]}]}
+#        reservations: {devices: [{driver: nvidia, count: all, capabilities: [gpu]}]}
 
   rq-worker:
     image: ghcr.io/m0wer/rssfilter-backend:master
@@ -74,7 +74,7 @@ services:
         limits:
           cpus: "${RQ_WORKER_CPUS:-2}"
           memory: "${RQ_WORKER_MEMORY:-4G}"
-        reservations: {devices: [{driver: nvidia, count: all, capabilities: [gpu]}]}
+#        reservations: {devices: [{driver: nvidia, count: all, capabilities: [gpu]}]}
 
   rq-dashboard:
     build: https://github.com/Parallels/rq-dashboard.git
