@@ -1,0 +1,155 @@
+0000000000000000000000000000000000000000 13d5dd286d27e12bf92a55b7dc317793cb12a302 m0wer <m0wer@autistici.org> 1709373343 +0100	commit (initial): initial commit
+13d5dd286d27e12bf92a55b7dc317793cb12a302 b2edc7070fa08c68a8b81507d86709f7d01da7a0 m0wer <m0wer@autistici.org> 1709381410 +0100	pull: Fast-forward
+b2edc7070fa08c68a8b81507d86709f7d01da7a0 14a5e49dca9d5fc7469df9b13dc392d667ecf6c6 m0wer <m0wer@autistici.org> 1709381422 +0100	pull: Fast-forward
+14a5e49dca9d5fc7469df9b13dc392d667ecf6c6 bb11cabff704e4ef15a569d0aaa8a26f84fee662 m0wer <m0wer@autistici.org> 1709383397 +0100	pull: Fast-forward
+bb11cabff704e4ef15a569d0aaa8a26f84fee662 9ac900716c06a3f8225d06c06211c4fda60468fe m0wer <m0wer@autistici.org> 1709384297 +0100	commit: add log endpoint
+9ac900716c06a3f8225d06c06211c4fda60468fe 4da35653549fdd673e130c6c41123e60561c39f8 m0wer <m0wer@autistici.org> 1709384450 +0100	pull: Fast-forward
+4da35653549fdd673e130c6c41123e60561c39f8 69cfaa013ab93cfe5959ff85406d01f03ef4c309 m0wer <m0wer@autistici.org> 1709384504 +0100	pull (finish): refs/heads/master onto 69cfaa013ab93cfe5959ff85406d01f03ef4c309
+69cfaa013ab93cfe5959ff85406d01f03ef4c309 7023fc71588a7b27fa0218385d9eb9e50bded4e1 m0wer <m0wer@autistici.org> 1709384568 +0100	commit: update backed requirements
+7023fc71588a7b27fa0218385d9eb9e50bded4e1 4dea78645858a132b5c867cb37f3c0e6170921a5 m0wer <m0wer@autistici.org> 1709395989 +0100	pull: Fast-forward
+4dea78645858a132b5c867cb37f3c0e6170921a5 6ff76de860ffbcc0e58d0aa0ede6b4af58a38732 m0wer <m0wer@autistici.org> 1709407278 +0100	pull: Fast-forward
+6ff76de860ffbcc0e58d0aa0ede6b4af58a38732 cb747527bb15bedf1db34573ca3ea15b0c1efe66 m0wer <m0wer@autistici.org> 1709409050 +0100	pull: Fast-forward
+cb747527bb15bedf1db34573ca3ea15b0c1efe66 b98684c3357ba23c492677923dcb392681cf1c4a m0wer <m0wer@autistici.org> 1709411399 +0100	pull: Fast-forward
+b98684c3357ba23c492677923dcb392681cf1c4a 8bbdc4c95c21cdfe775d0bb68d54ffcf26832949 m0wer <m0wer@autistici.org> 1709411920 +0100	commit: gitignore db
+8bbdc4c95c21cdfe775d0bb68d54ffcf26832949 1cfd0e6e990439ed244b47b4fc7e69beab37127c m0wer <m0wer@autistici.org> 1709415972 +0100	pull: Fast-forward
+1cfd0e6e990439ed244b47b4fc7e69beab37127c bdcea90606b5aa6512b4cd400ec32dca50a33abf m0wer <m0wer@autistici.org> 1709416156 +0100	pull: Fast-forward
+bdcea90606b5aa6512b4cd400ec32dca50a33abf 2e5cc790912683668623c2dc3cddebb8c80b093d m0wer <m0wer@autistici.org> 1709416547 +0100	commit: docker prod fixes
+2e5cc790912683668623c2dc3cddebb8c80b093d c3fa92df16b5256a13deaf43224093318f77c415 m0wer <m0wer@autistici.org> 1709451552 +0100	pull: Fast-forward
+c3fa92df16b5256a13deaf43224093318f77c415 f9445fd1dd8278b6a3e65adc29126b0c24b1fd07 m0wer <m0wer@autistici.org> 1709462619 +0100	pull: Fast-forward
+f9445fd1dd8278b6a3e65adc29126b0c24b1fd07 04c3205f12c6164f32a3fbe9731dcbd43b67c91e m0wer <m0wer@autistici.org> 1709935673 +0100	pull: Fast-forward
+04c3205f12c6164f32a3fbe9731dcbd43b67c91e 21e83b224d9d766fd1285948afd764e4e3b3ec2a m0wer <m0wer@autistici.org> 1709937248 +0100	commit: fix url quoting in feed
+21e83b224d9d766fd1285948afd764e4e3b3ec2a 2a885cab52d106d938b3cd2ae63abb093257bcb6 m0wer <m0wer@autistici.org> 1709970803 +0100	commit: add timing and gzip middlewares
+2a885cab52d106d938b3cd2ae63abb093257bcb6 5acb4ccdbd8ec178e1ff43d5590d4f45ba664d10 m0wer <m0wer@autistici.org> 1709973178 +0100	commit: add caching
+5acb4ccdbd8ec178e1ff43d5590d4f45ba664d10 8c054ac3fd909f95238b3a2a3d459d7cfaf0f3ba m0wer <m0wer@autistici.org> 1709973697 +0100	commit: improve dockerfile backend
+8c054ac3fd909f95238b3a2a3d459d7cfaf0f3ba 3ae6c08967710c0b891cd9e08e6d026c251f4de3 m0wer <m0wer@autistici.org> 1709973823 +0100	commit: fix dev compose
+3ae6c08967710c0b891cd9e08e6d026c251f4de3 9d3da1cf9ef8785dd566f7455d4b8fc97add0d50 m0wer <m0wer@autistici.org> 1709974766 +0100	commit: refactor backend structure and dockerfiles
+9d3da1cf9ef8785dd566f7455d4b8fc97add0d50 ed095650f3d4ee7f30f42cf5c79c129f8b3aaf82 m0wer <m0wer@autistici.org> 1709979819 +0100	commit: restart unless stopped
+ed095650f3d4ee7f30f42cf5c79c129f8b3aaf82 9ddd943e9b686d6ce98b1342bc2062195df61341 m0wer <m0wer@autistici.org> 1709980822 +0100	commit: disable pip-compile in pre-commit
+9ddd943e9b686d6ce98b1342bc2062195df61341 870710e465f936d5b7f7188f4021d7d2f2fb5021 m0wer <m0wer@autistici.org> 1710077562 +0100	commit: disable black and add mypy
+870710e465f936d5b7f7188f4021d7d2f2fb5021 9cb23db7703bf0723c4ad6ae61e398f5b0f18ea8 m0wer <m0wer@autistici.org> 1710096530 +0100	pull: Fast-forward
+9cb23db7703bf0723c4ad6ae61e398f5b0f18ea8 510cd820a9484132a0fbcea6a369ddf921a8a46b m0wer <m0wer@autistici.org> 1710097751 +0100	commit: async feed load and tenacity for aprsing
+510cd820a9484132a0fbcea6a369ddf921a8a46b 833c0425182ed5b3766e2c88488e7e0c8b4d938c m0wer <m0wer@autistici.org> 1710097773 +0100	commit (amend): async feed load and tenacity for parsing
+833c0425182ed5b3766e2c88488e7e0c8b4d938c c0f074d8725800a88944ef7051471e86258c3896 m0wer <m0wer@autistici.org> 1710097848 +0100	commit: fixup! async feed load and tenacity for parsing
+c0f074d8725800a88944ef7051471e86258c3896 9e1edef8d767d1c426bce979586727bd79140793 m0wer <m0wer@autistici.org> 1710097854 +0100	commit (amend): remove unused dependency
+9e1edef8d767d1c426bce979586727bd79140793 bcfafee0485f541082f0ac63af55b529e268ec01 m0wer <m0wer@autistici.org> 1710098887 +0100	commit: tenacity log retries
+bcfafee0485f541082f0ac63af55b529e268ec01 ba96238a62c580bc293ede0812e88ffc7e489e05 m0wer <m0wer@autistici.org> 1710100282 +0100	commit: handle upstream errors
+ba96238a62c580bc293ede0812e88ffc7e489e05 43522a8d856ad53af300628f96247c97abf471ef m0wer <m0wer@autistici.org> 1710100672 +0100	commit: increase retry delay
+43522a8d856ad53af300628f96247c97abf471ef 5398b17a9cbcbc6283acb1d168d75343c9bef5e6 m0wer <m0wer@autistici.org> 1710100796 +0100	commit: reduce log verbosity
+5398b17a9cbcbc6283acb1d168d75343c9bef5e6 f634ad7fb1a1366785ba871a27affbf195f9cd77 m0wer <m0wer@autistici.org> 1710585039 +0100	pull: Fast-forward
+f634ad7fb1a1366785ba871a27affbf195f9cd77 7e832bc2d7ca4ad5b13fa20a1a0d95cbf8a05881 m0wer <m0wer@autistici.org> 1710691279 +0100	commit: disable autoflush
+7e832bc2d7ca4ad5b13fa20a1a0d95cbf8a05881 17619dbd60db96c971d85eec1bef16d19a8dfafb m0wer <m0wer@autistici.org> 1710692287 +0100	commit: add recommendation test and useful commnads docs
+17619dbd60db96c971d85eec1bef16d19a8dfafb 9df5ba2c355a320c1d871c8d8f0fcb21b887ed88 m0wer <m0wer@autistici.org> 1710692305 +0100	commit (amend): add recommendation test and useful commands docs
+9df5ba2c355a320c1d871c8d8f0fcb21b887ed88 d3c87fd101c04ea6d09db19f3d9c811e682663c8 m0wer <m0wer@autistici.org> 1710693092 +0100	commit: add MAX_WORKERS env to compose for backend
+d3c87fd101c04ea6d09db19f3d9c811e682663c8 688ec4c94b360bacf4fd7182d95b153542951c1a m0wer <m0wer@autistici.org> 1710693675 +0100	commit: add gpu to compose
+688ec4c94b360bacf4fd7182d95b153542951c1a 65091581fd2e0bc4cbbff0b98e4b282d9e50efcc m0wer <m0wer@autistici.org> 1710703083 +0100	commit: fix rcompose gpu resources
+65091581fd2e0bc4cbbff0b98e4b282d9e50efcc 3f34fd1da26480a5aa9a60398bcbdb0e38f8a3db m0wer <m0wer@autistici.org> 1710703094 +0100	commit (amend): fix compose gpu resources
+3f34fd1da26480a5aa9a60398bcbdb0e38f8a3db 5428f488f898bd841c5d203d7ad3cae40b63faaf m0wer <m0wer@autistici.org> 1710705840 +0100	commit: compute mebeddings in batches and use cuda
+5428f488f898bd841c5d203d7ad3cae40b63faaf 58ef66e1f3713ffc71fabad086d1d612f063b491 m0wer <m0wer@autistici.org> 1710707605 +0100	commit: fixup! compute mebeddings in batches and use cuda
+58ef66e1f3713ffc71fabad086d1d612f063b491 de01932c5b5c50b5867fe0cda154172258e83868 m0wer <m0wer@autistici.org> 1710707650 +0100	rebase (finish): refs/heads/master onto 3f34fd1da26480a5aa9a60398bcbdb0e38f8a3db
+de01932c5b5c50b5867fe0cda154172258e83868 d0f3d4c70c5e022608c2520b2d70b5d3d14e8354 m0wer <m0wer@autistici.org> 1711144575 +0100	pull: Fast-forward
+d0f3d4c70c5e022608c2520b2d70b5d3d14e8354 c8142ead60dda17c20c11a5f21a0fac311bc15be m0wer <m0wer@autistici.org> 1711177549 +0100	commit: hadd HUGGINGFACE_CACHE volume
+c8142ead60dda17c20c11a5f21a0fac311bc15be 5d676656ed53394dceaa234084808145fffe9b70 m0wer <m0wer@autistici.org> 1711177563 +0100	commit (amend): add HUGGINGFACE_CACHE volume
+5d676656ed53394dceaa234084808145fffe9b70 e8b7b7a8472b23b1debb4985606dbcddc4b044d9 m0wer <m0wer@autistici.org> 1711177569 +0100	commit: add usefule queries doc
+e8b7b7a8472b23b1debb4985606dbcddc4b044d9 4c92bb4883a164205437c9c4bec17d66c1535e82 m0wer <m0wer@autistici.org> 1711177947 +0100	commit: fix contants
+4c92bb4883a164205437c9c4bec17d66c1535e82 8c8ecf3d3920443301cf7ed2cb26b803c7c1eef9 m0wer <m0wer@autistici.org> 1711178272 +0100	commit: disable cahce for feed
+8c8ecf3d3920443301cf7ed2cb26b803c7c1eef9 d962c3f787d28815b9f504b0f0c8c6fcf65a7ee7 m0wer <m0wer@autistici.org> 1711178532 +0100	commit: handle incorrect feeds
+d962c3f787d28815b9f504b0f0c8c6fcf65a7ee7 bdb146bb02bbe003419ff8840440efc0fdef422d m0wer <m0wer@autistici.org> 1711178860 +0100	commit: handle concurrency errors for feed route
+bdb146bb02bbe003419ff8840440efc0fdef422d c97664f77de5a90d08adb9a6c49d13bbfd7153a2 m0wer <m0wer@autistici.org> 1711179282 +0100	commit: fix constants and fedd parsing error handling
+c97664f77de5a90d08adb9a6c49d13bbfd7153a2 ae0326f2323fa889f95466d6415a7e8426ed8ce1 m0wer <m0wer@autistici.org> 1711181406 +0100	commit: fix root path
+ae0326f2323fa889f95466d6415a7e8426ed8ce1 7d51d65f2139fa84869c7c5771b8d0022caaa144 m0wer <m0wer@autistici.org> 1711181680 +0100	commit: add cache to docker workflow
+7d51d65f2139fa84869c7c5771b8d0022caaa144 2b65e7e6dab49ef681d62e8dffb6890f7557c6c9 m0wer <m0wer@autistici.org> 1711187557 +0100	commit: log time in ms
+2b65e7e6dab49ef681d62e8dffb6890f7557c6c9 77bf5ae0fe9d988dc02281b2071c642e68fe109e m0wer <m0wer@autistici.org> 1711187672 +0100	commit: debug root path
+77bf5ae0fe9d988dc02281b2071c642e68fe109e 33276bd17191f270f4cb1c7607e0a41aff86a0f3 m0wer <m0wer@autistici.org> 1711209234 +0100	commit: setup buildx github action
+33276bd17191f270f4cb1c7607e0a41aff86a0f3 e0704b92c51827a1fed32d8dfe7c38119689e9bb m0wer <m0wer@autistici.org> 1711209666 +0100	commit: add pip cache test action
+e0704b92c51827a1fed32d8dfe7c38119689e9bb 8578170f88dff8d710319758fcb7d4aa1e25cbeb m0wer <m0wer@autistici.org> 1711228334 +0100	commit: fix root path
+8578170f88dff8d710319758fcb7d4aa1e25cbeb c35391bf6df4c2f19bb70e10ad45f26c630267de m0wer <m0wer@autistici.org> 1711261227 +0100	commit: disable representation of mos model fields
+c35391bf6df4c2f19bb70e10ad45f26c630267de 6500fec7525d64838e0cde5954d920e57fb3a3d5 m0wer <m0wer@autistici.org> 1711262742 +0100	commit: fix feed logos, more logging and fix root path
+6500fec7525d64838e0cde5954d920e57fb3a3d5 1ed16a63a930bb04b2b4539eb5590d0caedd8831 m0wer <m0wer@autistici.org> 1711262895 +0100	commit: add LOGURU_LEVEL to compose
+1ed16a63a930bb04b2b4539eb5590d0caedd8831 a528bc2258b4e279be87caaf10758eaaa665bb65 m0wer <m0wer@autistici.org> 1711263093 +0100	commit: run workflows only when needed
+a528bc2258b4e279be87caaf10758eaaa665bb65 a22ed20b769874da47aa00eb9161faaa5db8ac87 m0wer <m0wer@autistici.org> 1711264133 +0100	commit: improve efficiency user create on feed route
+a22ed20b769874da47aa00eb9161faaa5db8ac87 812f980f60a92d3e13d039b4560554bf422a7a5e m0wer <m0wer@autistici.org> 1711264351 +0100	commit: log method and path in timing middleware
+812f980f60a92d3e13d039b4560554bf422a7a5e 8e40934ecec965a5a0921522f742512049f57927 m0wer <m0wer@autistici.org> 1711265089 +0100	commit: fix constrains article model
+8e40934ecec965a5a0921522f742512049f57927 b2c94fd86c88793307a4307e9edeb2edfb073cc9 m0wer <m0wer@autistici.org> 1711265517 +0100	commit: log time in fetc feeds command
+b2c94fd86c88793307a4307e9edeb2edfb073cc9 1bd0f333b91e2e8fb9e65a2e16aa8958059001f7 m0wer <m0wer@autistici.org> 1711309981 +0100	commit: fix embeddings storing
+1bd0f333b91e2e8fb9e65a2e16aa8958059001f7 e3f6e47716c0d5f80ea8441ddb48f1c0dced9d74 m0wer <m0wer@autistici.org> 1711311219 +0100	commit: add monitoring tests
+e3f6e47716c0d5f80ea8441ddb48f1c0dced9d74 093fc5c7667d4580fbd8a61b9a4cf644ab604bb8 m0wer <m0wer@autistici.org> 1711311303 +0100	commit: fiwx monitoring workflow
+093fc5c7667d4580fbd8a61b9a4cf644ab604bb8 9ce2fa9b2b28a41d4c93b0eaf890a17226565bd7 m0wer <m0wer@autistici.org> 1711311461 +0100	commit: enable manual workflow triggering for monitor
+9ce2fa9b2b28a41d4c93b0eaf890a17226565bd7 2f562234ee18b0ba01b2ded2e6a5a163d6ea3c01 m0wer <m0wer@autistici.org> 1711312749 +0100	commit: use background task for logging urls
+2f562234ee18b0ba01b2ded2e6a5a163d6ea3c01 19c619b6822fffba7cb3872cbc62cf357951935e m0wer <m0wer@autistici.org> 1711315118 +0100	commit: disable recommendation for now
+19c619b6822fffba7cb3872cbc62cf357951935e e53c33daaf7e8fbd94adb0ac2cc7a8bc5d4814c6 m0wer <m0wer@autistici.org> 1711375315 +0100	commit: update README
+e53c33daaf7e8fbd94adb0ac2cc7a8bc5d4814c6 8498983a3d0c731eb7088e4c75181255a7aacd4a m0wer <m0wer@autistici.org> 1711378877 +0100	commit: changed the backend docker image base to save build time and cache
+8498983a3d0c731eb7088e4c75181255a7aacd4a 3fab0beafbb25840bf7614764def0040aab73ea8 m0wer <m0wer@autistici.org> 1711399175 +0100	commit: acc cli command clusters
+3fab0beafbb25840bf7614764def0040aab73ea8 4384b3a0465c0193ea1f413446096f35f2651c8d m0wer <m0wer@autistici.org> 1711485645 +0100	merge alembic: Merge made by the 'ort' strategy.
+4384b3a0465c0193ea1f413446096f35f2651c8d 3fab0beafbb25840bf7614764def0040aab73ea8 m0wer <m0wer@autistici.org> 1711485659 +0100	reset: moving to HEAD^
+3fab0beafbb25840bf7614764def0040aab73ea8 8498983a3d0c731eb7088e4c75181255a7aacd4a m0wer <m0wer@autistici.org> 1711485693 +0100	reset: moving to origin/master
+8498983a3d0c731eb7088e4c75181255a7aacd4a 14fd2b3e6f76eff6b9133ba0deb3cd3924d30dfc m0wer <m0wer@autistici.org> 1711485851 +0100	merge alembic: Fast-forward
+14fd2b3e6f76eff6b9133ba0deb3cd3924d30dfc 1b62350171de7bd904f4464fbb73e16a76c312ab m0wer <m0wer@autistici.org> 1711486552 +0100	commit: copy complete backend to docker
+1b62350171de7bd904f4464fbb73e16a76c312ab 3216816bb65cc3045e75d05e828dc3b8f5761c09 m0wer <m0wer@autistici.org> 1711486619 +0100	commit: alembic upgrade head in prestart.sh
+3216816bb65cc3045e75d05e828dc3b8f5761c09 e9ebf28f669684bb8a879f33d9af608c813ee3a2 m0wer <m0wer@autistici.org> 1711487026 +0100	commit: enable recommendations
+e9ebf28f669684bb8a879f33d9af608c813ee3a2 01867cf4e0100e9d4487e2058d492f7c13cd9ae6 m0wer <m0wer@autistici.org> 1711487745 +0100	commit: don't compute embeddings on filter_articles
+01867cf4e0100e9d4487e2058d492f7c13cd9ae6 4e39265094b1835b485479e246e2591c098e1d29 m0wer <m0wer@autistici.org> 1711488188 +0100	commit: set random seed in filter articles shuffle
+4e39265094b1835b485479e246e2591c098e1d29 d01a117ab110181a3cf9503f990ed6b6ffb11c3b m0wer <m0wer@autistici.org> 1711571897 +0100	commit: add signup endpoints
+d01a117ab110181a3cf9503f990ed6b6ffb11c3b 6ee7c93e0851b2ed730ace321ddf6f319fa1c08e m0wer <m0wer@autistici.org> 1711573207 +0100	commit: add dependency python-multipart
+6ee7c93e0851b2ed730ace321ddf6f319fa1c08e f9a967b5f6ac5f38297369b147fdeea6cf47c566 m0wer <m0wer@autistici.org> 1711573290 +0100	commit: generate random uuid for user signup
+f9a967b5f6ac5f38297369b147fdeea6cf47c566 e56d71ad954bd270bd1c6475f77e3f618eff3e74 m0wer <m0wer@autistici.org> 1711606164 +0100	commit: fix bugs signup nad add tests
+e56d71ad954bd270bd1c6475f77e3f618eff3e74 99c6c470b8091e1d8e9fb0a9740b78b136008598 m0wer <m0wer@autistici.org> 1711705204 +0100	commit: add clusters endpoint
+99c6c470b8091e1d8e9fb0a9740b78b136008598 e03fab7f62823418554522df6e2a1a17a7ca6156 m0wer <m0wer@autistici.org> 1711723849 +0100	commit: add clusters_2d endpoint
+e03fab7f62823418554522df6e2a1a17a7ca6156 3dab975a3c28344042724a4abdbb644451abf3aa m0wer <m0wer@autistici.org> 1711783437 +0100	commit: improve get clusters 2D endpoint
+3dab975a3c28344042724a4abdbb644451abf3aa b0b573c26a62ebb58d0d61ef6078e44aed441f52 m0wer <m0wer@autistici.org> 1711907450 +0200	commit: make feed.description nullable
+b0b573c26a62ebb58d0d61ef6078e44aed441f52 07de0caa3ce277d79de9377978aa26327b52744d m0wer <m0wer@autistici.org> 1711912774 +0200	commit: static frontend
+07de0caa3ce277d79de9377978aa26327b52744d 87a044862ee419758dd224599d62d46b111ef2ff m0wer <m0wer@autistici.org> 1711912782 +0200	commit: add CORS headers to backend
+87a044862ee419758dd224599d62d46b111ef2ff 575ac9c16201b40bb5731c7d70813bf41b40f281 m0wer <m0wer@autistici.org> 1711913010 +0200	commit: add tracking code to frontend
+575ac9c16201b40bb5731c7d70813bf41b40f281 c631e35b6fd863d076b3a854af3bb40cafc3d215 m0wer <m0wer@autistici.org> 1711913535 +0200	commit: simplify generated feed
+c631e35b6fd863d076b3a854af3bb40cafc3d215 f561bb8f646d4fdb050b66def542f0f00b8b5f3f m0wer <m0wer@autistici.org> 1711914593 +0200	commit: fix license
+f561bb8f646d4fdb050b66def542f0f00b8b5f3f 67b5381c1113f5d840babfbb3521c861e9db475c m0wer <m0wer@autistici.org> 1711914620 +0200	commit: imporve docker-compose
+67b5381c1113f5d840babfbb3521c861e9db475c 445cbda303b0b2d16cf50d3ea75bb524ee29786f m0wer <m0wer@autistici.org> 1711914630 +0200	commit: update readme
+445cbda303b0b2d16cf50d3ea75bb524ee29786f 00bb651b6a86afbf27fdc5159cd0bb185d0397d3 m0wer <m0wer@autistici.org> 1711915274 +0200	commit: improve README
+00bb651b6a86afbf27fdc5159cd0bb185d0397d3 2b05c4c297e057f31d973784b789e5b4b12b05e8 m0wer <m0wer@autistici.org> 1711915289 +0200	commit: add details to landing page
+2b05c4c297e057f31d973784b789e5b4b12b05e8 9982d07fad244a2cfcf31a0912faa35972291c78 m0wer <m0wer@autistici.org> 1711916121 +0200	commit: typo
+9982d07fad244a2cfcf31a0912faa35972291c78 91c7396ac181c747b92f059d3262e7e132eeceba m0wer <m0wer@autistici.org> 1711917943 +0200	commit: add analytics events
+91c7396ac181c747b92f059d3262e7e132eeceba 51356a6d7d8e0e87017380fdc2d57c1a5b9c336d m0wer <m0wer@autistici.org> 1712175354 +0200	commit: fix bug when missing article.published
+51356a6d7d8e0e87017380fdc2d57c1a5b9c336d 67e6befda4a7c987d2be1cced111232da2e08216 m0wer <m0wer@autistici.org> 1712176843 +0200	commit: support urls with query params
+67e6befda4a7c987d2be1cced111232da2e08216 b25a1a18ff346f154935b2bf0f8730f50a673cd4 m0wer <m0wer@autistici.org> 1715002244 +0200	commit: feat: only pull feeds of active users
+b25a1a18ff346f154935b2bf0f8730f50a673cd4 020e1adaa98f2e1590341000a5c4f03908e00e5d m0wer <m0wer@autistici.org> 1715002389 +0200	commit: docs: add user stats commands
+020e1adaa98f2e1590341000a5c4f03908e00e5d 15c5e111312297ac4e76e48af805526b43dcd900 m0wer <m0wer@autistici.org> 1716140350 +0200	commit: fix: validate feed URLs to be domain URLs only
+15c5e111312297ac4e76e48af805526b43dcd900 17610e2c6469004e0bc307c173127e12d2638664 m0wer <m0wer@autistici.org> 1716141807 +0200	commit: fix: disable redirects when fetching feeds
+17610e2c6469004e0bc307c173127e12d2638664 b5ecda206298239904c65cfbedaf1b0e1229abf7 m0wer <m0wer@autistici.org> 1716142627 +0200	commit: fix: url type in cli
+b5ecda206298239904c65cfbedaf1b0e1229abf7 e10fd31dfbf5e073733b8a4e3d3dc35de47619f0 m0wer <m0wer@autistici.org> 1717737962 +0200	commit: fix: enable redirects again
+e10fd31dfbf5e073733b8a4e3d3dc35de47619f0 e7d0cc6bcdc3cbb876238337abfc59c697227bd4 m0wer <m0wer@autistici.org> 1717746655 +0200	commit: build: add limits to compose
+e7d0cc6bcdc3cbb876238337abfc59c697227bd4 6c4a34db79db18eb5c6630dd83461e0f317b7348 m0wer <m0wer@autistici.org> 1717746959 +0200	commit: build: smart limits for backend
+6c4a34db79db18eb5c6630dd83461e0f317b7348 400fd73afbb9493f27a97cf494f0ff4adef7332a m0wer <m0wer@autistici.org> 1717748900 +0200	commit: build: improve default limits
+400fd73afbb9493f27a97cf494f0ff4adef7332a a63a7a0efe4277ff34a73f450aa9fa9132b1bf15 m0wer <m0wer@autistici.org> 1719773688 +0200	commit: build: update compose limits
+a63a7a0efe4277ff34a73f450aa9fa9132b1bf15 18be5ecde9545148dac9d522a1922ba93ebf3df0 m0wer <m0wer@autistici.org> 1719774608 +0200	commit: build: add CUDA_VISIBLE_DEVICES env var
+18be5ecde9545148dac9d522a1922ba93ebf3df0 a9ff1f76de355e9775735c77aa0718ff3f115b99 m0wer <m0wer@autistici.org> 1721121223 +0200	merge rq: Fast-forward
+a9ff1f76de355e9775735c77aa0718ff3f115b99 69387f15c3db0ff86d9a67aa807559832c218aa4 m0wer <m0wer@autistici.org> 1721128150 +0200	commit: feat: batch processing
+69387f15c3db0ff86d9a67aa807559832c218aa4 4877e669285d3cd04a0335d87460b345b4a342c4 m0wer <m0wer@autistici.org> 1721135811 +0200	commit: feat: rq-dashboard
+4877e669285d3cd04a0335d87460b345b4a342c4 9fd870464591b61658bbfab52ec8e4ac614530c3 m0wer <m0wer@autistici.org> 1721141538 +0200	commit: feat: fetch feeds batch improved
+9fd870464591b61658bbfab52ec8e4ac614530c3 4a109c211a5e7342660942b148d60e6f10f9efce m0wer <m0wer@autistici.org> 1721141699 +0200	commit: fix: linkt
+4a109c211a5e7342660942b148d60e6f10f9efce fcf5934e97b7a9231477ae78d9a4a9fb9ab945c9 m0wer <m0wer@autistici.org> 1721141732 +0200	commit (amend): fix: lint
+fcf5934e97b7a9231477ae78d9a4a9fb9ab945c9 8e10730371a6cc3ad6c7e7fe2a3b70440216c20c m0wer <m0wer@autistici.org> 1721143349 +0200	commit: fix: function no longer async
+8e10730371a6cc3ad6c7e7fe2a3b70440216c20c ae39216c5f3fc2a4b0413e85cac08113efc1ca3d m0wer <m0wer@autistici.org> 1721145914 +0200	commit: fix: refresh job
+ae39216c5f3fc2a4b0413e85cac08113efc1ca3d 0eb062b167962c8957ec33b481f42ed684addf78 m0wer <m0wer@autistici.org> 1721146706 +0200	commit: feat: sync functions in cli.py
+0eb062b167962c8957ec33b481f42ed684addf78 01e6d0fe3c709f019440b5ae407ecb895daa1e6b m0wer <m0wer@autistici.org> 1721147548 +0200	commit: feat: improve performance of cleanup function
+01e6d0fe3c709f019440b5ae407ecb895daa1e6b 66cd390757e5971795b42e35e9d0c2d80a41232d m0wer <m0wer@autistici.org> 1721148258 +0200	commit: build: add FEED_FETCH_BATCH_SIZE to compose
+66cd390757e5971795b42e35e9d0c2d80a41232d a20b2d67e1c93e16921835e969b0cc87f538fe3b m0wer <m0wer@autistici.org> 1721204167 +0200	commit: fix: mark feeds as updated even if parsing fails
+a20b2d67e1c93e16921835e969b0cc87f538fe3b 937f3afcaac192e5c1bac3f3481b8ad3e5e37c77 m0wer <m0wer@autistici.org> 1721204375 +0200	commit: fix: default queue timeouts
+937f3afcaac192e5c1bac3f3481b8ad3e5e37c77 89132bb90b66902400dff9b861eb8a199a2ec149 m0wer <m0wer@autistici.org> 1721205286 +0200	commit: feat: add tiemouts to aiohttp requests
+89132bb90b66902400dff9b861eb8a199a2ec149 062ffc72efce0ce23d5edd7ba83e8e509220f301 m0wer <m0wer@autistici.org> 1721207632 +0200	commit: fix: type of aiohttp client timeout
+062ffc72efce0ce23d5edd7ba83e8e509220f301 16fe7686bd7cc0ef7c9d1752d9a17b2c64ef5b58 m0wer <m0wer@autistici.org> 1727517074 +0200	commit: fix: include feed.id in article uniqueness check
+16fe7686bd7cc0ef7c9d1752d9a17b2c64ef5b58 40cbf7a13ff643d82b94e4ba531c6aebd7b2dee4 m0wer <github@sgn.space> 1761989099 +0100	commit: fix: SSRF
+40cbf7a13ff643d82b94e4ba531c6aebd7b2dee4 c80f564f50ec90fd9ed5700d35a94cb8d8050d84 m0wer <github@sgn.space> 1761989397 +0100	commit: fix: decode URL-encoded characters in log_post link_url
+c80f564f50ec90fd9ed5700d35a94cb8d8050d84 9ed095046e3e0451e69f689fe54b621dd8b96851 m0wer <github@sgn.space> 1762002335 +0100	commit: feat: update deps and fix tests
+9ed095046e3e0451e69f689fe54b621dd8b96851 9a13ed8abea071f81d7c00950b0c113f2df0cfb3 m0wer <github@sgn.space> 1762002958 +0100	commit: feat: log_post endpoint handles URLs with protocols correctly
+9a13ed8abea071f81d7c00950b0c113f2df0cfb3 4202134e34589dec5ed0ceed15fa7308ff0f51d8 m0wer <github@sgn.space> 1762005503 +0100	commit: feat: simplify dockerfile
+4202134e34589dec5ed0ceed15fa7308ff0f51d8 5dc4fef84128a10242c9e29568a9dd207e9ac173 m0wer <github@sgn.space> 1762007101 +0100	commit: fix: restrict numpy version to ensure compatibility with torch
+5dc4fef84128a10242c9e29568a9dd207e9ac173 1e6305c1d150ed7b2773c9586a6a0efbb793b411 m0wer <github@sgn.space> 1762014866 +0100	commit: fix: completely encode URLs in feed links
+1e6305c1d150ed7b2773c9586a6a0efbb793b411 c7ede92d0c3a26f9152001282f6c43a005a6a2a8 m0wer <github@sgn.space> 1768486295 +0100	commit: feat: auto-discover feed URL from HTML pages in parse_feed
+c7ede92d0c3a26f9152001282f6c43a005a6a2a8 01bac17825302e58026416b58bdad77890e6cf0d m0wer <github@sgn.space> 1768487964 +0100	commit: fix: correct variable name in feed addition error handling
+01bac17825302e58026416b58bdad77890e6cf0d f957beb935adb10fe65f8f2fc0ea5143751626e1 m0wer <github@sgn.space> 1769375944 +0100	commit: test: delete old tests
+f957beb935adb10fe65f8f2fc0ea5143751626e1 2b644b85cf0d977eedc1f8af46a10747e5974dd0 m0wer <github@sgn.space> 1769376012 +0100	commit: build: update pre-commit hooks versions
+2b644b85cf0d977eedc1f8af46a10747e5974dd0 2c82eb19bf725f39c4a404c47e47e6e52a9649b4 m0wer <github@sgn.space> 1769377360 +0100	commit: ci: fix python setup action version
+2c82eb19bf725f39c4a404c47e47e6e52a9649b4 afdd27a6ffbe2820b896414f0cc53543c6fcce77 m0wer <github@sgn.space> 1769377516 +0100	commit: ci: fix setup-python action version and specify python-version
+afdd27a6ffbe2820b896414f0cc53543c6fcce77 85cc47dbf41519c87d28876e3a7a7863ec302e4b m0wer <github@sgn.space> 1769377704 +0100	commit: style: fix linting issues with sqlmodel AutoString usage
+85cc47dbf41519c87d28876e3a7a7863ec302e4b 6d8f69fe72e77fa34349affcf607bab6772b87fe m0wer <github@sgn.space> 1769449606 +0100	commit: feat: performance improvements and maintenance tasks
+6d8f69fe72e77fa34349affcf607bab6772b87fe 3baaf876d4fdd5023ac745f363d9c2747c93db4f m0wer <github@sgn.space> 1769457312 +0100	commit: chore: update dependencies
+3baaf876d4fdd5023ac745f363d9c2747c93db4f ac605f571ca57a0775e8c0f1210b5d4d96c43fb3 m0wer <github@sgn.space> 1769457655 +0100	commit: ci: update GitHub Actions to latest versions

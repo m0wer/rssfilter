@@ -1,0 +1,38 @@
+name: monitor backend
+
+on:
+  schedule:
+    - cron: '10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  monitor-backend:
+    runs-on: ubuntu-latest
+    env:
+      API_URL: https://rssfilter.sgn.space/api
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+          cache: pip
+      
+      - name: Install dependencies
+        working-directory: backend
+        run: pip install -r requirements.txt
+
+      - name: Run monitoring tests
+        working-directory: backend
+        run: python -m pytest --junitxml=junit/monitoring-results.xml -lvv tests/e2e/test_e2e_all.py
+
+      - name: Upload pytest test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-results
+          path: backend/junit/monitoring-results.xml
+        # Use always() to always run this step to publish test results when there are test failures
+        if: ${{ always() }}

@@ -1,0 +1,7 @@
+0000000000000000000000000000000000000000 8498983a3d0c731eb7088e4c75181255a7aacd4a m0wer <m0wer@autistici.org> 1711400780 +0100	branch: Created from origin/master
+8498983a3d0c731eb7088e4c75181255a7aacd4a 62dde55f88c05c969e3e4fee4a1ebe3ceacd6d4c m0wer <m0wer@autistici.org> 1711400890 +0100	commit: add alembic
+62dde55f88c05c969e3e4fee4a1ebe3ceacd6d4c b570445b4f3ff10198fa8ede90567bf2ebe581d6 m0wer <m0wer@autistici.org> 1711400905 +0100	cherry-pick: acc cli command clusters
+b570445b4f3ff10198fa8ede90567bf2ebe581d6 2a20d6c704fd2a09473a283be16c69ad0c195657 m0wer <m0wer@autistici.org> 1711485379 +0100	commit (amend): add cli command clusters
+2a20d6c704fd2a09473a283be16c69ad0c195657 62dde55f88c05c969e3e4fee4a1ebe3ceacd6d4c m0wer <m0wer@autistici.org> 1711485404 +0100	reset: moving to HEAD^
+62dde55f88c05c969e3e4fee4a1ebe3ceacd6d4c 32fb5d36224c2c0fc3e2f0558541511b1fe00639 m0wer <m0wer@autistici.org> 1711485423 +0100	commit: add cli clusters command with migration
+32fb5d36224c2c0fc3e2f0558541511b1fe00639 14fd2b3e6f76eff6b9133ba0deb3cd3924d30dfc m0wer <m0wer@autistici.org> 1711485493 +0100	commit: remove db setup from main

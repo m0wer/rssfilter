@@ -1,0 +1,213 @@
+services:
+
+  backend:
+    image: ghcr.io/m0wer/rssfilter-backend:master
+    container_name: rssfilter-backend
+    build:
+      context: backend
+    environment:
+      API_BASE_URL: "https://rssfilter.sgn.space/"
+      ROOT_PATH: "/api/"
+      REDIS_URL: "redis://redis:6379/0"
+      DATABASE_URL: "sqlite:///data/db.sqlite"
+      MAX_WORKERS: ${MAX_WORKERS:-2}
+      LOGURU_LEVEL: ${LOGURU_LEVEL:-INFO}
+      CUDA_VISIBLE_DEVICES: ${CUDA_VISIBLE_DEVICES:-all}
+      FEED_FETCH_BATCH_SIZE: ${FEED_FETCH_BATCH_SIZE:-10}
+      DORMANT_THRESHOLD_DAYS: ${DORMANT_THRESHOLD_DAYS:-90}
+      ARTICLE_RETENTION_DAYS: ${ARTICLE_RETENTION_DAYS:-180}
+      EMBEDDING_RETENTION_DAYS: ${EMBEDDING_RETENTION_DAYS:-30}
+    labels:
+      traefik.http.routers.backend.entrypoints: web
+      traefik.http.routers.backend.rule: PathPrefix(`/api`)
+      traefik.http.routers.backend.service: backend
+      traefik.http.services.backend.loadbalancer.server.port: 80
+    volumes:
+      - ${SQLITE_PATH:-./data/}:/app/data/
+      - ${HUGGINGFACE_CACHE:-./huggingface/}:/root/.cache/huggingface/
+    depends_on:
+      - redis
+      - rq-worker
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "${BACKEND_CPUS:-4}"
+          memory: "${BACKEND_MEMORY:-8G}"
+#        reservations: {devices: [{driver: nvidia, count: all, capabilities: [gpu]}]}
+
+  rq-worker:
+    image: ghcr.io/m0wer/rssfilter-backend:master
+    command: ["/app/worker.py", "high", "medium", "low"]
+    environment:
+      REDIS_URL: "redis://redis:6379/0"
+      DATABASE_URL: "sqlite:///data/db.sqlite"
+      LOGURU_LEVEL: ${LOGURU_LEVEL:-INFO}
+      CUDA_VISIBLE_DEVICES: ${CUDA_VISIBLE_DEVICES:-all}
+      DORMANT_THRESHOLD_DAYS: ${DORMANT_THRESHOLD_DAYS:-90}
+      ARTICLE_RETENTION_DAYS: ${ARTICLE_RETENTION_DAYS:-180}
+      EMBEDDING_RETENTION_DAYS: ${EMBEDDING_RETENTION_DAYS:-30}
+    volumes:
+      - ${SQLITE_PATH:-./data/}:/app/data/
+      - ${HUGGINGFACE_CACHE:-./huggingface/}:/root/.cache/huggingface/
+    depends_on:
+      - redis
+    restart: unless-stopped
+    deploy:
+      replicas: ${WORKER_REPLICAS:-2}
+      resources:
+        limits:
+          cpus: "${RQ_WORKER_CPUS:-2}"
+          memory: "${RQ_WORKER_MEMORY:-4G}"
+
+  rq-worker-gpu:
+    image: ghcr.io/m0wer/rssfilter-backend:master
+    command: ["/app/worker.py", "gpu"]
+    environment:
+      REDIS_URL: "redis://redis:6379/0"
+      DATABASE_URL: "sqlite:///data/db.sqlite"
+      LOGURU_LEVEL: ${LOGURU_LEVEL:-INFO}
+      CUDA_VISIBLE_DEVICES: ${CUDA_VISIBLE_DEVICES:-all}
+      DORMANT_THRESHOLD_DAYS: ${DORMANT_THRESHOLD_DAYS:-90}
+      ARTICLE_RETENTION_DAYS: ${ARTICLE_RETENTION_DAYS:-180}
+      EMBEDDING_RETENTION_DAYS: ${EMBEDDING_RETENTION_DAYS:-30}
+    volumes:
+      - ${SQLITE_PATH:-./data/}:/app/data/
+      - ${HUGGINGFACE_CACHE:-./huggingface/}:/root/.cache/huggingface/
+    depends_on:
+      - redis
+    restart: unless-stopped
+    deploy:
+      replicas: ${WORKER_GPU_REPLICAS:-1}
+      resources:
+        limits:
+          cpus: "${RQ_WORKER_CPUS:-2}"
+          memory: "${RQ_WORKER_MEMORY:-4G}"
+#        reservations: {devices: [{driver: nvidia, count: all, capabilities: [gpu]}]}
+
+  scheduler:
+    image: ghcr.io/m0wer/rssfilter-backend:master
+    container_name: rssfilter-scheduler
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        while true; do
+          echo "Running hourly feed fetch..."
+          python -m app.cli fetch-feeds
+          sleep 3600
+        done
+    environment:
+      REDIS_URL: "redis://redis:6379/0"
+      DATABASE_URL: "sqlite:///data/db.sqlite"
+      LOGURU_LEVEL: ${LOGURU_LEVEL:-INFO}
+      DORMANT_THRESHOLD_DAYS: ${DORMANT_THRESHOLD_DAYS:-90}
+    volumes:
+      - ${SQLITE_PATH:-./data/}:/app/data/
+    depends_on:
+      - redis
+      - rq-worker
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "256M"
+
+  maintenance:
+    image: ghcr.io/m0wer/rssfilter-backend:master
+    container_name: rssfilter-maintenance
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        while true; do
+          echo "Running daily maintenance..."
+          python -m app.cli maintenance
+          sleep 86400
+        done
+    environment:
+      REDIS_URL: "redis://redis:6379/0"
+      DATABASE_URL: "sqlite:///data/db.sqlite"
+      LOGURU_LEVEL: ${LOGURU_LEVEL:-INFO}
+      DORMANT_THRESHOLD_DAYS: ${DORMANT_THRESHOLD_DAYS:-90}
+      ARTICLE_RETENTION_DAYS: ${ARTICLE_RETENTION_DAYS:-180}
+      EMBEDDING_RETENTION_DAYS: ${EMBEDDING_RETENTION_DAYS:-30}
+    volumes:
+      - ${SQLITE_PATH:-./data/}:/app/data/
+    depends_on:
+      - redis
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: "512M"
+
+  rq-dashboard:
+    build: https://github.com/Parallels/rq-dashboard.git
+    container_name: rssfilter-rq-dashboard
+    command: ["--redis-url", "redis://redis:6379/0", "--url-prefix", "/rq", "--verbose", "--username", "admin", "--password", "${RQ_DASHBOARD_PASSWORD:-admin}"]
+    labels:
+      traefik.http.routers.rq-dashboard.entrypoints: web
+      traefik.http.routers.rq-dashboard.rule: PathPrefix(`/rq`)
+      traefik.http.routers.rq-dashboard.service: rq-dashboard
+      traefik.http.services.rq-dashboard.loadbalancer.server.port: 9181
+    ports:
+      - ${RQ_DASHBOARD_PORT:-9181}:9181
+    depends_on:
+      - redis
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: ${RQ_DASHBOARD_CPUS:-1}
+          memory: ${RQ_DASHBOARD_MEMORY:-50M}
+    
+
+  frontend:
+    image: ghcr.io/m0wer/rssfilter-frontend:master
+    container_name: rssfilter-frontend
+    build:
+      context: frontend
+    labels:
+      traefik.http.routers.frontend.entrypoints: web
+      traefik.http.routers.frontend.rule: PathPrefix(`/`)
+      traefik.http.routers.frontend.service: frontend
+      traefik.http.services.frontend.loadbalancer.server.port: 80
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: ${FRONTEND_CPUS:-2}
+          memory: ${FRONTEND_MEMORY:-50M}
+
+  proxy:
+    image: traefik:v2.3
+    container_name: rssfilter-proxy
+    command:
+     - --providers.docker
+     - --entryPoints.web.address=:80
+    ports:
+      - ${PROXY_PORT:-80}:80
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - backend
+      - frontend
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: ${PROXY_CPUS:-2}
+          memory: ${PROXY_MEMORY:-100M}
+
+  redis:
+    image: redis:7-alpine
+    container_name: rssfilter-redis
+    volumes:
+      - ${REDIS_PATH:-./redis/}:/data
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: ${REDIS_CPUS:-2}
+          memory: ${REDIS_MEMORY:-100M}

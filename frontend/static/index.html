@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RSS Filter</title>
+    <link rel="stylesheet" href="styles.css">
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+
+    <script defer src="https://analytics.sgn.space/script.js" data-website-id="a1fab1b6-2078-484d-9ef9-13976203c145"></script>
+</head>
+<body>
+    <div id="app">
+    <h1>RSS Filter</h1>
+    <p>Tired of not being able to catch up with all your RSS feeds? This tool will help you filter out the noise...</p>
+    <p>rssfilter is a recommendation system based on user read articles. By replacing the original RSS feed URLs, it starts reducing the number of unwanted items and tracking user read articles. It uses LLM embeddings and machine learning to recommend similar articles.</p>
+
+    <p>You can automatically convert all your existing feeds by uploading an OPML export from your RSS client.</p>
+
+    
+    <div id="feedUrlInput" class="form-element">
+        <input type="text" id="rssFeedUrl" placeholder="Enter RSS feed URL here">
+        <button onclick="validateFeedURL()" data-umami-event="rssFeedUrl">Generate Filtered Feed</button>
+    </div>
+    
+    <div id="customFeedUrl" class="form-element"></div>
+    
+    <div id="opmlUpload" class="form-element formFileMultiple-wrapper">
+        <label id="select-button" for="opmlFile">Select or drop an OPML file here</label>
+        <input type="file" id="opmlFile" accept=".opml" hidden>
+    </div>
+    
+    <!-- Submit button for OPML upload -->
+    <button id="submit-opml" class="form-element" onclick="handleOpmlUpload()" data-umami-event="submit-opml">Submit OPML File</button>
+    
+    <div id="customOpmlDownload" class="form-element"></div>
+
+
+    <p>Feedback welcome! Visit <a href="https://github.com/m0wer/rssfilter" target="_blank">m0wer/rssfilter</a> or email me: m0wer (at) autistici (dot) org<p>
+</div>
+    
+    <script src="app.js"></script>
+</body>
+</html>

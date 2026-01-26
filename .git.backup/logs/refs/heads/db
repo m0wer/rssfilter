@@ -1,0 +1,10 @@
+0000000000000000000000000000000000000000 7023fc71588a7b27fa0218385d9eb9e50bded4e1 m0wer <m0wer@autistici.org> 1709384651 +0100	branch: Created from HEAD
+7023fc71588a7b27fa0218385d9eb9e50bded4e1 7b814987ebec7b1f40ee757f2e2c338d06f0b4a2 m0wer <m0wer@autistici.org> 1709384772 +0100	commit: add swlmodel requirement
+7b814987ebec7b1f40ee757f2e2c338d06f0b4a2 4ed0daefc41e04eaddc209c109b1d753756d7273 m0wer <m0wer@autistici.org> 1709384787 +0100	commit (amend): add sqlmodel requirement
+4ed0daefc41e04eaddc209c109b1d753756d7273 eacafd3b87f8ccaf4a0b4185d94c9a06b7c9302f m0wer <m0wer@autistici.org> 1709384815 +0100	rebase (finish): refs/heads/db onto 0e5529c97340d3549a5e1faefbc73d472219d69d
+eacafd3b87f8ccaf4a0b4185d94c9a06b7c9302f bc51ee44f6c7ca5267ee050015c0e2a933b5813a m0wer <m0wer@autistici.org> 1709387218 +0100	commit: WIP
+bc51ee44f6c7ca5267ee050015c0e2a933b5813a eff1bf17b6b2519a6768baac94ed4994f8997b03 m0wer <m0wer@autistici.org> 1709395981 +0100	commit: fixup! WIP
+eff1bf17b6b2519a6768baac94ed4994f8997b03 3675c0c2a163d0553e8fe2912f022d2091387eac m0wer <m0wer@autistici.org> 1709396928 +0100	commit: fixup! fixup! WIP
+3675c0c2a163d0553e8fe2912f022d2091387eac 2af5ee48c8761dfa2eb43c5e3971c991203d6f66 m0wer <m0wer@autistici.org> 1709396939 +0100	rebase (finish): refs/heads/db onto eacafd3b87f8ccaf4a0b4185d94c9a06b7c9302f
+2af5ee48c8761dfa2eb43c5e3971c991203d6f66 577a5466ee1f2b6bf59364354c0bf51ae88c69a4 m0wer <m0wer@autistici.org> 1709396942 +0100	commit (amend): Add database
+577a5466ee1f2b6bf59364354c0bf51ae88c69a4 373bdbf2a4e4d0e19cc86a1f570d12b79beb6666 m0wer <m0wer@autistici.org> 1709397083 +0100	rebase (finish): refs/heads/db onto 4dea78645858a132b5c867cb37f3c0e6170921a5

@@ -1,0 +1,38 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+[user]
+	email = github@sgn.space
+	name = m0wer
+[remote "origin"]
+	url = git@github.com-m0wer:m0wer/rssfilter.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "master"]
+	remote = origin
+	merge = refs/heads/master
+[branch "feat/api"]
+	remote = origin
+	merge = refs/heads/feat/api
+[branch "opml"]
+	remote = origin
+	merge = refs/heads/opml
+[branch "db"]
+	remote = origin
+	merge = refs/heads/db
+[branch "feat/ci"]
+	remote = origin
+	merge = refs/heads/feat/ci
+[branch "tests"]
+	remote = origin
+	merge = refs/heads/tests
+[branch "recommender"]
+	remote = origin
+	merge = refs/heads/recommender
+[branch "feed_from_db"]
+	remote = origin
+	merge = refs/heads/feed_from_db
+[branch "alembic"]
+	remote = origin
+	merge = refs/heads/master

@@ -1,0 +1,7 @@
+0000000000000000000000000000000000000000 de01932c5b5c50b5867fe0cda154172258e83868 m0wer <m0wer@autistici.org> 1711139595 +0100	branch: Created from HEAD
+de01932c5b5c50b5867fe0cda154172258e83868 c3bb0b079a5cc3d0f8ace9b6c74fdcda498c436f m0wer <m0wer@autistici.org> 1711139598 +0100	commit: generate feed from db articles
+c3bb0b079a5cc3d0f8ace9b6c74fdcda498c436f 24f16e5bdf4c7bdd268e3343c8de0c9033665b70 m0wer <m0wer@autistici.org> 1711140390 +0100	commit: rename app.py to frontend.py
+24f16e5bdf4c7bdd268e3343c8de0c9033665b70 e8df75abfbde61435012d0e6a734d3b4946182e3 m0wer <m0wer@autistici.org> 1711143090 +0100	commit: add fetch feeds cli
+e8df75abfbde61435012d0e6a734d3b4946182e3 ec043f1032266bc119bee79a81a3eac7e4a2e735 m0wer <m0wer@autistici.org> 1711143109 +0100	commit: fixup! generate feed from db articles
+ec043f1032266bc119bee79a81a3eac7e4a2e735 6bc41c0770fd1b9f50b6e0f09dbf6a9fc46c1901 m0wer <m0wer@autistici.org> 1711143114 +0100	rebase (finish): refs/heads/feed_from_db onto de01932c5b5c50b5867fe0cda154172258e83868
+6bc41c0770fd1b9f50b6e0f09dbf6a9fc46c1901 c36bb83c877e55f869c6b0d4d3e631fb36dc2399 m0wer <m0wer@autistici.org> 1711143271 +0100	commit: more verbose test output pipeline

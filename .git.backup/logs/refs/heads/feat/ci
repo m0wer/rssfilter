@@ -1,0 +1,10 @@
+0000000000000000000000000000000000000000 7d277e6bc77d59eedea90199e00415cb924b5d76 m0wer <m0wer@autistici.org> 1709409056 +0100	branch: Created from refs/remotes/origin/feat/ci
+7d277e6bc77d59eedea90199e00415cb924b5d76 4b1cc8ab65b0f39a3195e323963fc10cf309b1b7 m0wer <m0wer@autistici.org> 1709410061 +0100	commit: fix CI
+4b1cc8ab65b0f39a3195e323963fc10cf309b1b7 9477459ad5501ac5162c8999354346200db81acf m0wer <m0wer@autistici.org> 1709410187 +0100	commit: fixup! fix CI
+9477459ad5501ac5162c8999354346200db81acf 83168bc9f8deb064a01b86a4a14e176e92d14339 m0wer <m0wer@autistici.org> 1709410225 +0100	commit: fixup! fixup! fix CI
+83168bc9f8deb064a01b86a4a14e176e92d14339 b7d6d022721f86d67bde3d07ecf481c6bca517d5 m0wer <m0wer@autistici.org> 1709410520 +0100	commit: fixup! fixup! fixup! fix CI
+b7d6d022721f86d67bde3d07ecf481c6bca517d5 af3c225ccbc1c0b2745b37d8f9375a1b3c279227 m0wer <m0wer@autistici.org> 1709410626 +0100	commit: fixup! fixup! fixup! fixup! fix CI
+af3c225ccbc1c0b2745b37d8f9375a1b3c279227 8ea20939078516e242464f68c864da4b1634cfc7 m0wer <m0wer@autistici.org> 1709410868 +0100	commit: fixup! fixup! fixup! fixup! fixup! fix CI
+8ea20939078516e242464f68c864da4b1634cfc7 f5cb7f4799332b86c33ef82b321f5c7a9749d369 m0wer <m0wer@autistici.org> 1709411040 +0100	pull (finish): refs/heads/feat/ci onto f5cb7f4799332b86c33ef82b321f5c7a9749d369
+f5cb7f4799332b86c33ef82b321f5c7a9749d369 4df28ee4af81ec41e6292d7a16cda5362025d28a m0wer <m0wer@autistici.org> 1709411062 +0100	commit: fixup! fixup! fixup! fixup! fixup! fixup! fix CI
+4df28ee4af81ec41e6292d7a16cda5362025d28a 3018cd9cc0784f4957c8a96bd0a7370dd04d26bc m0wer <m0wer@autistici.org> 1709411072 +0100	pull (finish): refs/heads/feat/ci onto 89a548b73e568e62c5649fd60ee9e12d3da2e15e

@@ -1,0 +1,5 @@
+0000000000000000000000000000000000000000 18be5ecde9545148dac9d522a1922ba93ebf3df0 m0wer <m0wer@autistici.org> 1721118853 +0200	branch: Created from HEAD
+18be5ecde9545148dac9d522a1922ba93ebf3df0 721edd165c633c1e39e8796dbae076aa8ba2d57a m0wer <m0wer@autistici.org> 1721118862 +0200	commit: feat: use rq
+721edd165c633c1e39e8796dbae076aa8ba2d57a 9954d1f47c1eda3cdbaaf8e6d5a2430b8814ddd3 m0wer <m0wer@autistici.org> 1721119055 +0200	commit: fix: revert feed route to not use rq
+9954d1f47c1eda3cdbaaf8e6d5a2430b8814ddd3 dc805ea71f12266492195d2a3ee70c1dddb5d0d0 m0wer <m0wer@autistici.org> 1721121100 +0200	commit: feat: GPU queue
+dc805ea71f12266492195d2a3ee70c1dddb5d0d0 a9ff1f76de355e9775735c77aa0718ff3f115b99 m0wer <m0wer@autistici.org> 1721121168 +0200	commit: docs: disable GPU in compose

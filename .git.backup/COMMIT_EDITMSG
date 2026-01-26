@@ -1,0 +1,101 @@
+ci: update GitHub Actions to latest versions
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# On branch master
+# Your branch is up to date with 'origin/master'.
+#
+# Changes to be committed:
+#	modified:   .github/workflows/docker.yaml
+#	modified:   .github/workflows/monitor.yaml
+#	modified:   .github/workflows/pre-commit.yaml
+#	modified:   .github/workflows/test.yaml
+#
+# ------------------------ >8 ------------------------
+# Do not modify or remove the line above.
+# Everything below it will be ignored.
+diff --git .github/workflows/docker.yaml .github/workflows/docker.yaml
+index b7e4aea..2266354 100644
+--- .github/workflows/docker.yaml
++++ .github/workflows/docker.yaml
+@@ -28,13 +28,13 @@ jobs:
+ 
+     steps:
+       - name: Checkout repository
+-        uses: actions/checkout@v2
++        uses: actions/checkout@v4
+ 
+       - name: Set up Docker Buildx
+         uses: docker/setup-buildx-action@v3
+ 
+       - name: Log in to the Container registry
+-        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
++        uses: docker/login-action@v3
+         with:
+           registry: ${{ env.REGISTRY }}
+           username: ${{ github.actor }}
+@@ -42,12 +42,12 @@ jobs:
+ 
+       - name: Extract metadata (tags, labels) for Docker
+         id: meta
+-        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
++        uses: docker/metadata-action@v5
+         with:
+           images: ${{ matrix.image }}
+ 
+       - name: Build and push Docker image
+-        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
++        uses: docker/build-push-action@v6
+         with:
+           context: ${{ matrix.context }}
+           push: true
+diff --git .github/workflows/monitor.yaml .github/workflows/monitor.yaml
+index a7d0341..1f22b6c 100644
+--- .github/workflows/monitor.yaml
++++ .github/workflows/monitor.yaml
+@@ -13,10 +13,10 @@ jobs:
+ 
+     steps:
+       - name: Checkout repository
+-        uses: actions/checkout@v2
++        uses: actions/checkout@v4
+ 
+       - name: Set up Python
+-        uses: actions/setup-python@v4
++        uses: actions/setup-python@v5
+         with:
+           python-version: 3.12
+           cache: pip
+diff --git .github/workflows/pre-commit.yaml .github/workflows/pre-commit.yaml
+index 011a871..44149aa 100644
+--- .github/workflows/pre-commit.yaml
++++ .github/workflows/pre-commit.yaml
+@@ -7,7 +7,7 @@ jobs:
+   pre-commit:
+     runs-on: ubuntu-latest
+     steps:
+-    - uses: actions/checkout@v3
++    - uses: actions/checkout@v4
+     - uses: actions/setup-python@v5
+       with:
+         python-version: '3.13'
+diff --git .github/workflows/test.yaml .github/workflows/test.yaml
+index 865d5ca..6d459ee 100644
+--- .github/workflows/test.yaml
++++ .github/workflows/test.yaml
+@@ -11,12 +11,12 @@ jobs:
+ 
+     steps:
+       - name: Checkout repository
+-        uses: actions/checkout@v2
++        uses: actions/checkout@v4
+ 
+       - name: Set up Python
+-        uses: actions/setup-python@v4
++        uses: actions/setup-python@v5
+         with:
+-          python-version: 3.12
++          python-version: "3.13"
+           cache: pip
+       
+       - name: Install dependencies
