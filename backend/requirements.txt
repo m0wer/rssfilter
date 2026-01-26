@@ -265,7 +265,7 @@ safetensors==0.7.0
     # via transformers
 scikit-learn==1.8.0
     # via -r requirements.in
-scipy==1.17.0
+scipy==1.15.3
     # via
     #   -r requirements.in
     #   scikit-learn

@@ -21,7 +21,7 @@ python-multipart
 rich
 rq
 scikit-learn
-scipy
+scipy<1.16
 sqlmodel
 tenacity
 torch
