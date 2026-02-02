@@ -22,7 +22,9 @@ class User(SQLModel, table=True):
         back_populates="users", link_model=UserArticleLink
     )
     feeds: list["Feed"] = Relationship(  # type: ignore  # noqa: F821
-        back_populates="users", link_model=UserFeedLink
+        back_populates="users",
+        link_model=UserFeedLink,
+        sa_relationship_kwargs={"overlaps": "feed,feed_links,user"},
     )
     feed_links: list["UserFeedLink"] = Relationship(  # type: ignore  # noqa: F821
         back_populates="user", sa_relationship_kwargs={"overlaps": "feeds,users"}

@@ -1,9 +1,13 @@
 import asyncio
 import os
 import json
+import time
+from functools import wraps
+from typing import Callable, TypeVar
 from sqlmodel import create_engine, Session, select, update, delete, text
-from sqlalchemy import func
-from sqlalchemy.engine import Connection
+from sqlalchemy import func, event
+from sqlalchemy.engine import Connection, Engine
+from sqlite3 import OperationalError as SQLiteOperationalError
 from datetime import datetime, timezone, timedelta
 from loguru import logger
 from redis import Redis  # type: ignore
@@ -25,8 +29,59 @@ from app.recommend import compute_embeddings, cluster_articles, filter_articles
 ENGINE = create_engine(
     os.getenv("DATABASE_URL", "sqlite:///data/db.sqlite"),
     echo=bool(os.getenv("DEBUG", False)),
-    connect_args={"check_same_thread": False},
+    connect_args={"check_same_thread": False, "timeout": 30},
 )
+
+
+@event.listens_for(Engine, "connect")
+def set_sqlite_pragma(dbapi_connection, connection_record):  # type: ignore[no-untyped-def]
+    """Configure SQLite for better concurrency."""
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA journal_mode=WAL")
+    cursor.execute("PRAGMA busy_timeout=30000")
+    cursor.close()
+
+
+T = TypeVar("T")
+
+
+def with_db_retry(
+    max_retries: int = 3,
+    base_delay: float = 0.1,
+    max_delay: float = 2.0,
+) -> Callable[[Callable[..., T]], Callable[..., T]]:
+    """Decorator to retry database operations on lock errors with exponential backoff."""
+
+    def decorator(func: Callable[..., T]) -> Callable[..., T]:
+        @wraps(func)
+        def wrapper(*args, **kwargs) -> T:  # type: ignore[no-untyped-def]
+            last_exception = None
+            for attempt in range(max_retries):
+                try:
+                    return func(*args, **kwargs)
+                except Exception as e:
+                    # Check if it's a database locked error
+                    if "database is locked" in str(e) or isinstance(
+                        e.__cause__, SQLiteOperationalError
+                    ):
+                        last_exception = e
+                        delay = min(base_delay * (2**attempt), max_delay)
+                        logger.warning(
+                            f"Database locked on attempt {attempt + 1}/{max_retries} "
+                            f"for {func.__name__}, retrying in {delay:.2f}s"
+                        )
+                        time.sleep(delay)
+                    else:
+                        raise
+            logger.error(
+                f"Database still locked after {max_retries} retries for {func.__name__}"
+            )
+            raise last_exception  # type: ignore[misc]
+
+        return wrapper
+
+    return decorator
+
 
 redis_conn = Redis.from_url(os.getenv("REDIS_URL", "redis://localhost:6379"))
 low_queue = Queue("low", connection=redis_conn, default_timeout=60)
@@ -53,6 +108,7 @@ def compute_article_embedding(article_id: int) -> None:
             logger.error(f"Error computing embedding for article {article_id}: {e}")
 
 
+@with_db_retry(max_retries=3, base_delay=0.1, max_delay=1.0)
 def recompute_user_clusters(user_id: str) -> None:
     with Session(ENGINE) as session:
         user = session.get(User, user_id)
@@ -286,6 +342,7 @@ def run_full_maintenance() -> dict:
 BATCH_SIZE = int(os.getenv("FEED_FETCH_BATCH_SIZE", "10"))
 
 
+@with_db_retry(max_retries=3, base_delay=0.2, max_delay=2.0)
 def fetch_feed_batch(feed_ids: list[int]) -> None:
     async def fetch_single_feed(feed: Feed) -> Feed | None:
         try:
@@ -382,6 +439,7 @@ def fetch_all_feeds() -> None:
     )
 
 
+@with_db_retry(max_retries=5, base_delay=0.1, max_delay=2.0)
 def log_user_action(user_id: str, article_id: int, link_url: str) -> None:
     with Session(ENGINE) as session:
         user = session.exec(select(User).where(User.id == user_id)).first()
