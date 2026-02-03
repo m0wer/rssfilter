@@ -11,6 +11,7 @@ import aiohttp
 from ipaddress import ip_address, IPv4Address, IPv6Address
 from socket import gaierror
 from contextlib import asynccontextmanager
+import os
 
 import re
 import dateparser
@@ -25,6 +26,10 @@ from sqlmodel import Field, Relationship, SQLModel
 from .relations import UserFeedLink
 from .article import Article
 from ..constants import API_BASE_URL, ROOT_PATH
+
+# Proxy configuration for SSRF protection
+# When set, all feed requests go through this proxy, which should only allow external hosts
+FEED_PROXY = os.getenv("FEED_PROXY")  # e.g., "http://gluetun:8888"
 
 
 class Feed(SQLModel, table=True):
@@ -268,12 +273,35 @@ class SSRFSafeResolverWrapper:
 
 @asynccontextmanager
 async def ssrf_safe_session(**kwargs):
-    connector = aiohttp.TCPConnector(resolver=SSRFSafeResolverWrapper())
-    async with aiohttp.ClientSession(connector=connector, **kwargs) as session:
-        yield session
+    """Create a session with SSRF protection.
+
+    SSRF protection strategy:
+    - If FEED_PROXY is set: Route all requests through the proxy.
+      The proxy (e.g., gluetun) should be configured to only allow external hosts.
+    - If no proxy: Use DNS resolution validation to block private IPs.
+    """
+    if FEED_PROXY:
+        # Proxy handles SSRF protection - no need for custom resolver
+        logger.debug(f"Using proxy for feed requests: {FEED_PROXY}")
+        async with aiohttp.ClientSession(**kwargs) as session:
+            yield session
+    else:
+        # No proxy - use custom resolver to validate IPs
+        connector = aiohttp.TCPConnector(resolver=SSRFSafeResolverWrapper())
+        async with aiohttp.ClientSession(connector=connector, **kwargs) as session:
+            yield session
 
 
 def validate_url_not_ip(url: str) -> None:
+    """Validate that a URL doesn't point directly to a private IP.
+
+    This is a defense-in-depth check. When using a proxy, the proxy
+    handles the actual SSRF protection.
+    """
+    # Skip validation if using proxy (proxy handles SSRF protection)
+    if FEED_PROXY:
+        return
+
     from urllib.parse import urlparse
 
     parsed_url = urlparse(url)
@@ -286,142 +314,41 @@ def validate_url_not_ip(url: str) -> None:
         pass
 
 
-def _normalize_hostname(hostname: str | None) -> str:
-    """Normalize hostname by removing www. prefix and lowercasing."""
-    if not hostname:
-        return ""
-    hostname = hostname.lower()
-    if hostname.startswith("www."):
-        hostname = hostname[4:]
-    return hostname
-
-
-def _get_parent_domain(hostname: str | None) -> str:
-    """Extract the parent domain (e.g., 'example.com' from 'blog.example.com')."""
-    if not hostname:
-        return ""
-    hostname = hostname.lower()
-    parts = hostname.split(".")
-    # For domains like 'example.com', return as-is
-    # For 'blog.example.com', return 'example.com'
-    # For 'co.uk' style TLDs, this is a simplification
-    if len(parts) >= 2:
-        return ".".join(parts[-2:])
-    return hostname
-
-
-def is_safe_redirect(original_url: str, redirect_url: str) -> bool:
-    """Check if a redirect is safe to follow.
-
-    Safe redirects include:
-    - Relative URLs (same host by definition)
-    - Same host redirects (with or without www.)
-    - Subdomain changes within same parent domain (e.g., blog.example.com ↔ example.com)
-    - Redirects from known feed proxy services (FeedBurner, FeedPress, etc.)
-
-    Unsafe redirects that are blocked:
-    - Cross-domain redirects (except from feed proxies)
-    - Redirects to private IPs (handled by validate_url_not_ip)
-    """
-    from urllib.parse import urlparse, urljoin
-
-    orig = urlparse(original_url)
-
-    # Handle relative URLs by resolving them against the original
-    if not redirect_url.startswith(("http://", "https://")):
-        redirect_url = urljoin(original_url, redirect_url)
-
-    redir = urlparse(redirect_url)
-
-    # Compare normalized hostnames (ignoring www. prefix)
-    orig_host = _normalize_hostname(orig.hostname)
-    redir_host = _normalize_hostname(redir.hostname)
-
-    # Same host (exact match) - always safe
-    if orig_host == redir_host:
-        return True
-
-    # Known feed proxy services - always allow redirects FROM these domains
-    feed_proxies = {
-        "feedburner.com",
-        "feeds.feedburner.com",
-        "feeds2.feedburner.com",
-        "feedpress.me",
-        "feed.feedburster.com",
-        "feedproxy.google.com",
-    }
-
-    # Check if original domain is a feed proxy
-    orig_parent = _get_parent_domain(orig.hostname)
-    if orig_host in feed_proxies or orig_parent in feed_proxies:
-        logger.debug(f"Allowing redirect from feed proxy {orig_host} to {redir_host}")
-        return True
-
-    # Same parent domain (e.g., blog.example.com → example.com)
-    orig_parent = _get_parent_domain(orig.hostname)
-    redir_parent = _get_parent_domain(redir.hostname)
-
-    if orig_parent == redir_parent and orig_parent:
-        logger.debug(
-            f"Allowing same-parent-domain redirect: {orig_host} → {redir_host}"
-        )
-        return True
-
-    # Different domains - not safe
-    return False
-
-
 async def _fetch_url(
     session: aiohttp.ClientSession,
     url: str,
-    max_redirects: int = 3,
+    max_redirects: int = 10,
 ) -> tuple[str, str]:
-    """Fetch URL content with SSRF protection and safe redirect handling.
+    """Fetch URL content with SSRF protection, following all redirects.
+
+    All redirects to external hosts are allowed. SSRF protection is provided by:
+    1. If FEED_PROXY is set: requests go through the proxy which only allows external hosts
+    2. Without proxy: SSRFSafeResolverWrapper validates DNS resolution for each request,
+       blocking any that resolve to private/internal IPs
 
     Returns:
         Tuple of (content, final_url) - final_url may differ if redirects occurred.
     """
-    from urllib.parse import urljoin
-
-    current_url = url
-    for _ in range(max_redirects + 1):
-        validate_url_not_ip(current_url)
-        try:
-            async with session.get(
-                current_url,
-                headers={"User-agent": "Mozilla/5.0"},
-                allow_redirects=False,
-            ) as response:
-                if response.status in (301, 302, 303, 307, 308):
-                    redirect_url = response.headers.get("Location")
-                    if redirect_url:
-                        # Resolve relative URLs
-                        if not redirect_url.startswith(("http://", "https://")):
-                            redirect_url = urljoin(current_url, redirect_url)
-                        validate_url_not_ip(redirect_url)
-                        if is_safe_redirect(current_url, redirect_url):
-                            logger.debug(
-                                f"Following safe redirect: {current_url} -> {redirect_url}"
-                            )
-                            current_url = redirect_url
-                            continue
-                        else:
-                            logger.warning(
-                                f"Blocked unsafe redirect: {current_url} -> {redirect_url}"
-                            )
-                            raise UpstreamError(
-                                f"Unsafe redirect to different host: {redirect_url}"
-                            )
-
-                response.raise_for_status()
-                return await response.text(), current_url
-        except ClientError as e:
-            raise UpstreamError(f"Error fetching feed: {e}") from e
-        except SSRFException as e:
-            logger.warning(f"SSRFException: {e}")
-            raise
-
-    raise UpstreamError(f"Too many redirects (max {max_redirects})")
+    validate_url_not_ip(url)
+    try:
+        async with session.get(
+            url,
+            headers={"User-agent": "Mozilla/5.0"},
+            allow_redirects=True,
+            max_redirects=max_redirects,
+            proxy=FEED_PROXY,  # None if not set, aiohttp ignores None
+        ) as response:
+            # Validate the final URL after redirects (defense in depth)
+            final_url = str(response.url)
+            validate_url_not_ip(final_url)
+            response.raise_for_status()
+            return await response.text(), final_url
+    except aiohttp.TooManyRedirects:
+        raise UpstreamError(f"Too many redirects (max {max_redirects})")
+    except ClientError as e:
+        raise UpstreamError(f"Error fetching feed: {e}") from e
+    except SSRFException:
+        raise
 
 
 @validate_call
