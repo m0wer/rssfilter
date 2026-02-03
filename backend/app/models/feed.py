@@ -296,14 +296,32 @@ def _normalize_hostname(hostname: str | None) -> str:
     return hostname
 
 
+def _get_parent_domain(hostname: str | None) -> str:
+    """Extract the parent domain (e.g., 'example.com' from 'blog.example.com')."""
+    if not hostname:
+        return ""
+    hostname = hostname.lower()
+    parts = hostname.split(".")
+    # For domains like 'example.com', return as-is
+    # For 'blog.example.com', return 'example.com'
+    # For 'co.uk' style TLDs, this is a simplification
+    if len(parts) >= 2:
+        return ".".join(parts[-2:])
+    return hostname
+
+
 def is_safe_redirect(original_url: str, redirect_url: str) -> bool:
-    """Check if a redirect is safe (HTTP→HTTPS upgrade or same-host redirect).
+    """Check if a redirect is safe to follow.
 
     Safe redirects include:
     - Relative URLs (same host by definition)
-    - HTTP → HTTPS upgrades on same host
-    - Same-scheme redirects on same host
-    - www. prefix additions/removals (e.g., example.com ↔ www.example.com)
+    - Same host redirects (with or without www.)
+    - Subdomain changes within same parent domain (e.g., blog.example.com ↔ example.com)
+    - Redirects from known feed proxy services (FeedBurner, FeedPress, etc.)
+
+    Unsafe redirects that are blocked:
+    - Cross-domain redirects (except from feed proxies)
+    - Redirects to private IPs (handled by validate_url_not_ip)
     """
     from urllib.parse import urlparse, urljoin
 
@@ -319,17 +337,37 @@ def is_safe_redirect(original_url: str, redirect_url: str) -> bool:
     orig_host = _normalize_hostname(orig.hostname)
     redir_host = _normalize_hostname(redir.hostname)
 
-    if orig_host != redir_host:
-        return False
-
-    # Allow HTTP→HTTPS upgrades (most common case)
-    if orig.scheme == "http" and redir.scheme == "https":
+    # Same host (exact match) - always safe
+    if orig_host == redir_host:
         return True
 
-    # Allow same-scheme redirects (e.g., path changes on same host)
-    if orig.scheme == redir.scheme:
+    # Known feed proxy services - always allow redirects FROM these domains
+    feed_proxies = {
+        "feedburner.com",
+        "feeds.feedburner.com",
+        "feeds2.feedburner.com",
+        "feedpress.me",
+        "feed.feedburster.com",
+        "feedproxy.google.com",
+    }
+
+    # Check if original domain is a feed proxy
+    orig_parent = _get_parent_domain(orig.hostname)
+    if orig_host in feed_proxies or orig_parent in feed_proxies:
+        logger.debug(f"Allowing redirect from feed proxy {orig_host} to {redir_host}")
         return True
 
+    # Same parent domain (e.g., blog.example.com → example.com)
+    orig_parent = _get_parent_domain(orig.hostname)
+    redir_parent = _get_parent_domain(redir.hostname)
+
+    if orig_parent == redir_parent and orig_parent:
+        logger.debug(
+            f"Allowing same-parent-domain redirect: {orig_host} → {redir_host}"
+        )
+        return True
+
+    # Different domains - not safe
     return False
 
 
