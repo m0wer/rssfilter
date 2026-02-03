@@ -51,6 +51,50 @@ curl -X 'GET' \
 To use the self-hosted frontend, you should change `apiBaseUrl` in
 `frontend/static/app.js` to match the backend URL.
 
+### Architecture
+
+The application consists of several services:
+
+- **backend**: FastAPI application serving the API
+- **frontend**: Static web frontend
+- **redis**: Message queue for background jobs
+- **rq-worker**: Background workers for feed fetching and embeddings
+- **rq-worker-gpu**: GPU-enabled worker for computing embeddings
+- **scheduler**: Handles all periodic tasks (replaces external cron jobs)
+- **proxy**: Traefik reverse proxy
+
+### Scheduled Tasks
+
+The scheduler service handles all periodic tasks automatically:
+
+| Task | Schedule | Description |
+|------|----------|-------------|
+| `fetch_all_feeds` | Hourly | Fetches all feeds for active users |
+| `run_full_maintenance` | Daily 4am UTC | Cleanup old articles, vacuum database |
+| `retry_disabled_feeds` | Weekly Sunday 3am UTC | Retry feeds that were disabled due to errors |
+
+No external cron jobs are required.
+
+### CLI Commands
+
+The backend includes a CLI for manual operations:
+
+```shell
+# Inside the backend container
+python -m app.cli --help
+
+# Available commands:
+python -m app.cli fetch-feeds      # Manually trigger feed fetching
+python -m app.cli retry-feeds      # Re-enable and retry disabled feeds
+python -m app.cli maintenance      # Run full maintenance cycle
+python -m app.cli stats            # Show database statistics
+python -m app.cli freeze-users     # Freeze dormant users
+python -m app.cli unfreeze USER_ID # Unfreeze a specific user
+python -m app.cli clean-articles   # Delete old unread articles
+python -m app.cli clean-embeddings # Remove old embeddings
+python -m app.cli vacuum           # Vacuum and analyze database
+```
+
 ## Development
 
 ### Backend
@@ -82,4 +126,3 @@ You can install these hooks with `pre-commit install` and run them on demand by 
 
 If you have any questions, feel free to contact me at
 m0wer at autistici dot org.
-```
