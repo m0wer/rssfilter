@@ -13,6 +13,7 @@ from app.tasks import (
     get_database_stats,
     run_full_maintenance,
     unfreeze_user,
+    retry_disabled_feeds,
 )
 from app.models.article import Article
 from app.models.feed import Feed
@@ -34,6 +35,17 @@ def fetch_feeds() -> None:
     """Fetch all feeds for active (non-frozen) users."""
     fetch_all_feeds()
     typer.echo("Feed fetch tasks enqueued")
+
+
+@cli.command()
+def retry_feeds() -> None:
+    """Re-enable disabled feeds and give them another chance.
+
+    This should be run periodically (e.g., weekly) to retry feeds that may
+    have had temporary issues like server downtime.
+    """
+    count = retry_disabled_feeds()
+    typer.echo(f"Re-enabled {count} disabled feeds for retry")
 
 
 @cli.command()
@@ -101,6 +113,7 @@ def stats() -> None:
     typer.echo(f"  - Active (30d): {stats['users']['active_30d']}")
     typer.echo(f"  - Frozen: {stats['users']['frozen']}")
     typer.echo(f"Feeds: {stats['feeds']['total']}")
+    typer.echo(f"  - Disabled: {stats['feeds']['disabled']}")
     typer.echo(f"Articles: {stats['articles']['total']}")
     typer.echo(f"  - With embeddings: {stats['articles']['with_embeddings']}")
     typer.echo(f"User-Article Links: {stats['links']['user_article']}")

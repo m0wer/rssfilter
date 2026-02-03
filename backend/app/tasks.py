@@ -300,6 +300,11 @@ def get_database_stats() -> dict:
             },
             "feeds": {
                 "total": session.exec(select(func.count()).select_from(Feed)).one(),
+                "disabled": session.exec(
+                    select(func.count())
+                    .select_from(Feed)
+                    .where(Feed.is_disabled.is_(True))  # type: ignore[attr-defined]
+                ).one(),
             },
             "articles": {
                 "total": session.exec(select(func.count()).select_from(Article)).one(),
@@ -482,6 +487,49 @@ def fetch_all_feeds() -> None:
     logger.info(
         f"Processed {len(active_feeds)} active feeds in batches of {BATCH_SIZE}"
     )
+
+
+def retry_disabled_feeds() -> int:
+    """Re-enable disabled feeds and give them another chance.
+
+    This should be called periodically (e.g., weekly) to retry feeds that may
+    have had temporary issues. The feeds will be re-disabled if they fail again.
+
+    Returns:
+        Number of feeds re-enabled for retry.
+    """
+    with Session(ENGINE) as session:
+        one_month_ago = datetime.now(timezone.utc) - timedelta(days=30)
+
+        # Only retry feeds that have active users subscribed
+        disabled_feeds_with_users = list(
+            session.exec(
+                select(Feed)
+                .join(UserFeedLink, Feed.id == UserFeedLink.feed_id)  # type: ignore[arg-type]
+                .join(User, UserFeedLink.user_id == User.id)  # type: ignore[arg-type]
+                .where(User.last_request > one_month_ago)
+                .where(User.is_frozen.is_(False))  # type: ignore[attr-defined]
+                .where(Feed.is_disabled.is_(True))  # type: ignore[attr-defined]
+                .distinct()
+            ).all()
+        )
+
+        for feed in disabled_feeds_with_users:
+            feed.is_disabled = False
+            feed.consecutive_failures = 0
+            # Keep last_error for debugging context
+
+        session.commit()
+
+        # Queue them for fetching
+        for i in range(0, len(disabled_feeds_with_users), BATCH_SIZE):
+            batch = disabled_feeds_with_users[i : i + BATCH_SIZE]
+            enqueue_low_priority(fetch_feed_batch, [feed.id for feed in batch])
+
+        logger.info(
+            f"Re-enabled {len(disabled_feeds_with_users)} disabled feeds for retry"
+        )
+        return len(disabled_feeds_with_users)
 
 
 @with_db_retry(max_retries=5, base_delay=0.1, max_delay=2.0)
