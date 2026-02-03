@@ -2,7 +2,7 @@ import pytest
 import pytest_asyncio
 from aiohttp import web
 from aiohttp.test_utils import TestServer
-from app.models.feed import parse_feed, SSRFException
+from app.models.feed import parse_feed, SSRFException, is_safe_redirect
 
 
 @pytest_asyncio.fixture
@@ -18,10 +18,16 @@ async def redirect_server():
             status=302, headers={"Location": "http://169.254.169.254/latest/meta-data/"}
         )
 
+    async def redirect_to_different_host(request):
+        return web.Response(
+            status=302, headers={"Location": "http://evil.com/feed.xml"}
+        )
+
     app = web.Application()
     app.router.add_get("/redirect-localhost", redirect_to_localhost)
     app.router.add_get("/redirect-private", redirect_to_private)
     app.router.add_get("/redirect-metadata", redirect_to_metadata)
+    app.router.add_get("/redirect-different-host", redirect_to_different_host)
 
     server = TestServer(app)
     await server.start_server()
@@ -66,3 +72,39 @@ async def test_ssrf_redirect_to_metadata_service(redirect_server):
     url = f"http://{redirect_server.host}:{redirect_server.port}/redirect-metadata"
     with pytest.raises(SSRFException):
         await parse_feed(url)
+
+
+class TestIsSafeRedirect:
+    """Test the is_safe_redirect function."""
+
+    def test_http_to_https_same_host(self):
+        """HTTP to HTTPS upgrade on same host should be safe."""
+        assert is_safe_redirect("http://example.com/feed", "https://example.com/feed")
+
+    def test_http_to_https_same_host_with_path_change(self):
+        """HTTP to HTTPS with path change on same host should be safe."""
+        assert is_safe_redirect("http://example.com/old", "https://example.com/new")
+
+    def test_same_scheme_same_host(self):
+        """Same scheme redirect on same host should be safe."""
+        assert is_safe_redirect("https://example.com/old", "https://example.com/new")
+
+    def test_different_host_not_safe(self):
+        """Redirect to different host should not be safe."""
+        assert not is_safe_redirect("http://example.com/feed", "http://evil.com/feed")
+
+    def test_https_to_http_not_safe(self):
+        """HTTPS to HTTP downgrade should not be safe."""
+        assert not is_safe_redirect(
+            "https://example.com/feed", "http://example.com/feed"
+        )
+
+    def test_case_insensitive_hostname(self):
+        """Hostname comparison should be case-insensitive."""
+        assert is_safe_redirect("http://Example.COM/feed", "https://example.com/feed")
+
+    def test_subdomain_not_safe(self):
+        """Redirect to subdomain should not be safe."""
+        assert not is_safe_redirect(
+            "http://example.com/feed", "https://sub.example.com/feed"
+        )

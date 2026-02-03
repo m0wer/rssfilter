@@ -4,7 +4,7 @@ from datetime import datetime, timedelta, timezone
 from fastapi import Request
 import json
 from fastapi import APIRouter, Response, Depends
-from sqlmodel import Session, select
+from sqlmodel import Session, select, or_
 from loguru import logger
 from app.models.article import Article
 from app.models.feed import (
@@ -54,10 +54,15 @@ async def get_feed(
             session.add(user)
             session.commit()
 
-        # Feed handling
+        # Feed handling - look up by url or original_url (for redirected feeds)
         try:
             feed: Feed = session.exec(
-                select(Feed).where(Feed.url == str(feed_url))
+                select(Feed).where(
+                    or_(
+                        Feed.url == str(feed_url),
+                        Feed.original_url == str(feed_url),
+                    )
+                )
             ).one()
         except NoResultFound:
             logger.info(

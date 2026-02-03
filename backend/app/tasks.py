@@ -340,21 +340,26 @@ def run_full_maintenance() -> dict:
 
 
 BATCH_SIZE = int(os.getenv("FEED_FETCH_BATCH_SIZE", "10"))
+MAX_CONSECUTIVE_FAILURES = int(os.getenv("FEED_MAX_FAILURES", "5"))
 
 
 @with_db_retry(max_retries=3, base_delay=0.2, max_delay=2.0)
 def fetch_feed_batch(feed_ids: list[int]) -> None:
-    async def fetch_single_feed(feed: Feed) -> Feed | None:
+    async def fetch_single_feed(feed: Feed) -> tuple[Feed | None, str | None]:
+        """Fetch a single feed and return (parsed_feed, error_message)."""
         try:
-            return await parse_feed(HttpUrl(feed.url))
+            parsed = await parse_feed(HttpUrl(feed.url))
+            return parsed, None
         except (SSRFException, UpstreamError) as e:
             logger.warning(f"Error fetching feed {feed.id}: {e}")
-            return None
+            return None, str(e)
         except Exception as e:
             logger.error(f"Unhandled error fetching feed {feed.id}: {e}")
-            return None
+            return None, str(e)
 
-    async def fetch_multiple_feeds(feeds: list[Feed]) -> list[Feed | None]:
+    async def fetch_multiple_feeds(
+        feeds: list[Feed],
+    ) -> list[tuple[Feed | None, str | None]]:
         return await asyncio.gather(*[fetch_single_feed(feed) for feed in feeds])
 
     with Session(ENGINE) as session:
@@ -366,11 +371,49 @@ def fetch_feed_batch(feed_ids: list[int]) -> None:
         results = asyncio.run(fetch_multiple_feeds(feeds))
 
         new_articles = []
-        for feed, parsed_feed in zip(feeds, results):
+        updated_urls = 0
+        for feed, (parsed_feed, error) in zip(feeds, results):
             feed.updated_at = datetime.now(timezone.utc)
 
             if parsed_feed is None:
+                # Track failure
+                feed.consecutive_failures += 1
+                feed.last_error = error
+                if feed.consecutive_failures >= MAX_CONSECUTIVE_FAILURES:
+                    feed.is_disabled = True
+                    logger.warning(
+                        f"Disabled feed {feed.id} ({feed.url}) after "
+                        f"{feed.consecutive_failures} consecutive failures: {error}"
+                    )
                 continue
+
+            # Success - reset failure tracking
+            feed.consecutive_failures = 0
+            feed.last_error = None
+
+            # Check if URL changed (redirect was followed)
+            if parsed_feed.url != feed.url:
+                # Check if new URL already exists
+                existing_feed = session.exec(
+                    select(Feed).where(Feed.url == parsed_feed.url)
+                ).first()
+                if existing_feed:
+                    logger.warning(
+                        f"Feed {feed.id} redirected to {parsed_feed.url} which already "
+                        f"exists as feed {existing_feed.id}, marking as disabled"
+                    )
+                    feed.is_disabled = True
+                    feed.last_error = f"Redirects to existing feed {existing_feed.id}"
+                    continue
+                else:
+                    logger.info(
+                        f"Updating feed {feed.id} URL: {feed.url} -> {parsed_feed.url}"
+                    )
+                    # Preserve the original URL so users can still query with it
+                    if feed.original_url is None:
+                        feed.original_url = feed.url
+                    feed.url = parsed_feed.url
+                    updated_urls += 1
 
             for article in parsed_feed.articles:
                 existing_article = session.exec(
@@ -391,6 +434,7 @@ def fetch_feed_batch(feed_ids: list[int]) -> None:
 
         logger.info(
             f"Fetched {len(feeds)} feeds, added {len(new_articles)} new articles"
+            + (f", updated {updated_urls} URLs" if updated_urls else "")
         )
 
 
@@ -426,6 +470,7 @@ def fetch_all_feeds() -> None:
                 .join(User, UserFeedLink.user_id == User.id)  # type: ignore[arg-type]
                 .where(User.last_request > one_month_ago)
                 .where(User.is_frozen.is_(False))  # type: ignore[attr-defined]
+                .where(Feed.is_disabled.is_(False))  # type: ignore[attr-defined]
                 .distinct()
             ).all()
         )

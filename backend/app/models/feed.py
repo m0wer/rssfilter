@@ -29,7 +29,10 @@ from ..constants import API_BASE_URL, ROOT_PATH
 
 class Feed(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    url: str = Field(unique=True)
+    url: str = Field(unique=True)  # Canonical URL (may be updated after redirects)
+    original_url: str | None = Field(
+        default=None, index=True
+    )  # Original URL user subscribed with (if different from url)
     title: str
     logo: str | None = Field(repr=False)
     description: str | None = Field(default=None, repr=False)
@@ -40,6 +43,10 @@ class Feed(SQLModel, table=True):
     updated_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc), repr=False
     )
+    # Error tracking for feed fetching
+    consecutive_failures: int = Field(default=0, repr=False)
+    last_error: str | None = Field(default=None, repr=False)
+    is_disabled: bool = Field(default=False, repr=False)
 
     users: list["User"] = Relationship(  # type: ignore # noqa: F821
         back_populates="feeds",
@@ -279,33 +286,74 @@ def validate_url_not_ip(url: str) -> None:
         pass
 
 
-async def _fetch_url(
-    session: aiohttp.ClientSession, url: str, original_url: str | None = None
-) -> str:
-    """Fetch URL content with SSRF protection and redirect handling."""
-    validate_url_not_ip(url)
-    try:
-        async with session.get(
-            url,
-            headers={"User-agent": "Mozilla/5.0"},
-            allow_redirects=False,
-        ) as response:
-            if response.status in (301, 302, 303, 307, 308):
-                redirect_url = response.headers.get("Location")
-                if redirect_url:
-                    validate_url_not_ip(redirect_url)
-                    logger.warning(f"Redirect detected: {url} -> {redirect_url}")
-                    raise UpstreamError(
-                        "Redirects are not supported for security reasons"
-                    )
+def is_safe_redirect(original_url: str, redirect_url: str) -> bool:
+    """Check if a redirect is safe (HTTP→HTTPS upgrade or same-host redirect)."""
+    from urllib.parse import urlparse
 
-            response.raise_for_status()
-            return await response.text()
-    except ClientError as e:
-        raise UpstreamError(f"Error fetching feed: {e}") from e
-    except SSRFException as e:
-        logger.warning(f"SSRFException: {e}")
-        raise
+    orig = urlparse(original_url)
+    redir = urlparse(redirect_url)
+
+    # Must have same hostname (case-insensitive)
+    if (orig.hostname or "").lower() != (redir.hostname or "").lower():
+        return False
+
+    # Allow HTTP→HTTPS upgrades (most common case)
+    if orig.scheme == "http" and redir.scheme == "https":
+        return True
+
+    # Allow same-scheme redirects (e.g., path changes on same host)
+    if orig.scheme == redir.scheme:
+        return True
+
+    return False
+
+
+async def _fetch_url(
+    session: aiohttp.ClientSession,
+    url: str,
+    max_redirects: int = 3,
+) -> tuple[str, str]:
+    """Fetch URL content with SSRF protection and safe redirect handling.
+
+    Returns:
+        Tuple of (content, final_url) - final_url may differ if redirects occurred.
+    """
+    current_url = url
+    for _ in range(max_redirects + 1):
+        validate_url_not_ip(current_url)
+        try:
+            async with session.get(
+                current_url,
+                headers={"User-agent": "Mozilla/5.0"},
+                allow_redirects=False,
+            ) as response:
+                if response.status in (301, 302, 303, 307, 308):
+                    redirect_url = response.headers.get("Location")
+                    if redirect_url:
+                        validate_url_not_ip(redirect_url)
+                        if is_safe_redirect(current_url, redirect_url):
+                            logger.debug(
+                                f"Following safe redirect: {current_url} -> {redirect_url}"
+                            )
+                            current_url = redirect_url
+                            continue
+                        else:
+                            logger.warning(
+                                f"Blocked unsafe redirect: {current_url} -> {redirect_url}"
+                            )
+                            raise UpstreamError(
+                                f"Unsafe redirect to different host: {redirect_url}"
+                            )
+
+                response.raise_for_status()
+                return await response.text(), current_url
+        except ClientError as e:
+            raise UpstreamError(f"Error fetching feed: {e}") from e
+        except SSRFException as e:
+            logger.warning(f"SSRFException: {e}")
+            raise
+
+    raise UpstreamError(f"Too many redirects (max {max_redirects})")
 
 
 @validate_call
@@ -314,11 +362,14 @@ async def parse_feed(feed_url: HttpUrl) -> Feed:
 
     If the URL points to an HTML page, attempts to discover the RSS/Atom feed URL
     from <link rel="alternate"> tags.
+
+    Note: The returned Feed's url field will be the final URL after any redirects,
+    which may differ from the input feed_url.
     """
     validate_url_not_ip(str(feed_url))
 
     async with ssrf_safe_session(timeout=ClientTimeout(total=20)) as aiohttp_session:
-        feed_response = await _fetch_url(aiohttp_session, str(feed_url))
+        feed_response, final_url = await _fetch_url(aiohttp_session, str(feed_url))
 
         parsed = feedparser.parse(feed_response)
         if not parsed.get("feed") or not parsed.feed.get("title"):
@@ -327,22 +378,21 @@ async def parse_feed(feed_url: HttpUrl) -> Feed:
                 logger.info(
                     f"Discovered feed URL {discovered_url} from HTML page {feed_url}"
                 )
-                feed_response = await _fetch_url(
-                    aiohttp_session, discovered_url, str(feed_url)
+                feed_response, final_url = await _fetch_url(
+                    aiohttp_session, discovered_url
                 )
                 parsed = feedparser.parse(feed_response)
                 if not parsed.get("feed") or not parsed.feed.get("title"):
                     raise UpstreamError(
                         f"Discovered feed URL {discovered_url} is not a valid feed."
                     )
-                feed_url = HttpUrl(discovered_url)
             else:
                 raise UpstreamError(
                     "URL is not a valid RSS/Atom feed and no feed link was found in the page."
                 )
 
     feed = Feed(
-        url=str(feed_url),
+        url=final_url,  # Use the final URL after redirects
         title=parsed.feed.get("title"),
         description=parsed.feed.get("description"),
         logo=parsed.feed.get("logo"),
