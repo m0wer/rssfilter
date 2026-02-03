@@ -51,6 +51,32 @@ curl -X 'GET' \
 To use the self-hosted frontend, you should change `apiBaseUrl` in
 `frontend/static/app.js` to match the backend URL.
 
+### Security
+
+#### SSRF Protection
+
+RSS Filter includes built-in protection against Server-Side Request Forgery (SSRF) attacks. When fetching feeds, the application automatically blocks requests to:
+- Private IP ranges (192.168.x.x, 10.x.x.x, 172.16.x.x-172.31.x.x)
+- Localhost (127.x.x.x, ::1)
+- Link-local addresses (169.254.x.x)
+- AWS metadata service (169.254.169.254)
+
+This protection works **automatically for basic setups** - no configuration needed. The application validates DNS resolution for all requests, including redirects.
+
+#### Enhanced Security with Proxy (Optional)
+
+For additional security in production environments, you can route all feed requests through a proxy that only allows external hosts:
+
+```yaml
+# docker-compose.yaml
+services:
+  backend:
+    environment:
+      FEED_PROXY: http://gluetun:8888  # Your proxy service
+```
+
+Using a proxy provides defense-in-depth by enforcing network-level isolation.
+
 ### Architecture
 
 The application consists of several services:
