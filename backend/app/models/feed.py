@@ -286,15 +286,40 @@ def validate_url_not_ip(url: str) -> None:
         pass
 
 
+def _normalize_hostname(hostname: str | None) -> str:
+    """Normalize hostname by removing www. prefix and lowercasing."""
+    if not hostname:
+        return ""
+    hostname = hostname.lower()
+    if hostname.startswith("www."):
+        hostname = hostname[4:]
+    return hostname
+
+
 def is_safe_redirect(original_url: str, redirect_url: str) -> bool:
-    """Check if a redirect is safe (HTTP→HTTPS upgrade or same-host redirect)."""
-    from urllib.parse import urlparse
+    """Check if a redirect is safe (HTTP→HTTPS upgrade or same-host redirect).
+
+    Safe redirects include:
+    - Relative URLs (same host by definition)
+    - HTTP → HTTPS upgrades on same host
+    - Same-scheme redirects on same host
+    - www. prefix additions/removals (e.g., example.com ↔ www.example.com)
+    """
+    from urllib.parse import urlparse, urljoin
 
     orig = urlparse(original_url)
+
+    # Handle relative URLs by resolving them against the original
+    if not redirect_url.startswith(("http://", "https://")):
+        redirect_url = urljoin(original_url, redirect_url)
+
     redir = urlparse(redirect_url)
 
-    # Must have same hostname (case-insensitive)
-    if (orig.hostname or "").lower() != (redir.hostname or "").lower():
+    # Compare normalized hostnames (ignoring www. prefix)
+    orig_host = _normalize_hostname(orig.hostname)
+    redir_host = _normalize_hostname(redir.hostname)
+
+    if orig_host != redir_host:
         return False
 
     # Allow HTTP→HTTPS upgrades (most common case)
@@ -318,6 +343,8 @@ async def _fetch_url(
     Returns:
         Tuple of (content, final_url) - final_url may differ if redirects occurred.
     """
+    from urllib.parse import urljoin
+
     current_url = url
     for _ in range(max_redirects + 1):
         validate_url_not_ip(current_url)
@@ -330,6 +357,9 @@ async def _fetch_url(
                 if response.status in (301, 302, 303, 307, 308):
                     redirect_url = response.headers.get("Location")
                     if redirect_url:
+                        # Resolve relative URLs
+                        if not redirect_url.startswith(("http://", "https://")):
+                            redirect_url = urljoin(current_url, redirect_url)
                         validate_url_not_ip(redirect_url)
                         if is_safe_redirect(current_url, redirect_url):
                             logger.debug(

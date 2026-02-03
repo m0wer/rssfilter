@@ -108,3 +108,35 @@ class TestIsSafeRedirect:
         assert not is_safe_redirect(
             "http://example.com/feed", "https://sub.example.com/feed"
         )
+
+    def test_relative_url_safe(self):
+        """Relative URLs are same-host by definition."""
+        assert is_safe_redirect("https://example.com/old/feed", "/new/feed")
+
+    def test_relative_url_path_only(self):
+        """Relative path redirects should be safe."""
+        assert is_safe_redirect("https://example.com/rss/full.xml", "/rss/index.xml")
+
+    def test_www_prefix_added(self):
+        """Adding www. prefix should be safe."""
+        assert is_safe_redirect(
+            "http://example.com/feed", "https://www.example.com/feed"
+        )
+
+    def test_www_prefix_removed(self):
+        """Removing www. prefix should be safe."""
+        assert is_safe_redirect(
+            "https://www.example.com/feed", "https://example.com/feed"
+        )
+
+    def test_www_to_www_same_host(self):
+        """www to www on same host should be safe."""
+        assert is_safe_redirect(
+            "http://www.example.com/feed", "https://www.example.com/feed"
+        )
+
+    def test_different_subdomain_not_safe(self):
+        """Redirect to different subdomain (not www) should not be safe."""
+        assert not is_safe_redirect(
+            "http://blog.example.com/feed", "https://api.example.com/feed"
+        )
