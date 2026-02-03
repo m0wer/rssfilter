@@ -84,7 +84,7 @@ def with_db_retry(
 
 
 redis_conn = Redis.from_url(os.getenv("REDIS_URL", "redis://localhost:6379"))
-low_queue = Queue("low", connection=redis_conn, default_timeout=60)
+low_queue = Queue("low", connection=redis_conn, default_timeout=180)
 medium_queue = Queue("medium", connection=redis_conn, default_timeout=60)
 high_queue = Queue("high", connection=redis_conn, default_timeout=20)
 gpu_queue = Queue("gpu", connection=redis_conn, default_timeout=300)
